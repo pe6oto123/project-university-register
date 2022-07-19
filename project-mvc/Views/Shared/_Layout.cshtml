@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"]</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/aps_mvc_gui.styles.css" asp-append-version="true" />
+</head>
+<body>
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="position:fixed; width:100%; top:0rem; padding-left:0.5rem;padding-right:0.5rem">
+			<div style="margin-right:auto">
+				<li class="btn-group">
+					@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "btn btn-primary" })
+					<button type="button" class="btn btn-primary" style="margin-right:0.5rem">
+						Home
+					</button>
+					<button type="button" class="btn btn-primary" style="margin-right:0.5rem">
+						Action
+					</button>
+					<div class="dropdown-container" style="position:relative">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+							University
+						</button>
+						<ul role="menu" class="dropdown-menu" style="position:absolute; margin-top:1rem;">
+							<li>@Html.ActionLink("Faculty", "Index", "Faculties", new { area = "" }, new { @class = "dropdown-item" })</li>
+							<li>@Html.ActionLink("Major", "Index", "Majors", new { area = "" }, new { @class = "dropdown-item" })</li>
+							<li>@Html.ActionLink("Subject", "Index", "Subjects", new { area = "" }, new { @class = "dropdown-item" })</li>
+						</ul>
+					</div>
+				</li>
+			</div>
+			<button type="button" class="btn btn-primary" style="margin-right:0.5rem">
+				Log in
+			</button><button type="button" class="btn btn-primary" style="margin-right:0.5rem">
+				Register
+			</button>
+		</nav>
+	</header>
+	<div class="container">
+		<main role="main" class="pb-3" style="margin-top:4rem">
+			@RenderBody()
+		</main>
+	</div>
+
+	<footer class="border-top footer text-muted" style="background: white;  position: fixed;  width: 100%;  bottom: 0rem;">
+		<div class="container" style="height:2.5rem; margin-left:0rem">
+			&copy; 2022 - project_mvc - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+		</div>
+	</footer>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
