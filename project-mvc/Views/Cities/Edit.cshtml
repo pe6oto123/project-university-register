@@ -14,7 +14,7 @@ ViewData["Title"] = "Edit";
 			<input type="hidden" asp-for="Id" />
 			<div class="form-group">
 				<label asp-for="Name" class="control-label" style="font-weight:bold"></label>
-				<input asp-for="Name" class="form-control" autocomplete="off"/>
+				<input asp-for="Name" class="form-control" autocomplete="off" />
 				<span asp-validation-for="Name" class="text-danger"></span>
 			</div>
 			<div class="form-group">
@@ -24,10 +24,10 @@ ViewData["Title"] = "Edit";
 			</div>
 			<div class="form-group">
 				<label asp-for="Population" class="control-label" style="font-weight:bold"></label>
-				<input asp-for="Population" class="form-control" autocomplete="off"/>
+				<input asp-for="Population" class="form-control" autocomplete="off" />
 				<span asp-validation-for="Population" class="text-danger"></span>
 			</div>
-			<div class="btn-group" style="margin-top:0.5rem; float:right">
+			<div class="form-group" style="margin-top:0.5rem; float:right">
 				<input type="submit" value="Save" class="btn btn-primary" />
 				<a class="btn btn-secondary" asp-action="Index">Back to List</a>
 			</div>

@@ -50,8 +50,6 @@
 					</td>
 					<td style="text-align-last: center;">
 						<div class="btn-group">
-							<a type="button" class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">
-								<i class="bi bi-eye-fill"></i></a>
 							<a type="button" class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id">
 								<i class="bi bi-pencil-fill"></i></a>
 							<button id="delete-show-modal" type="button" class="btn btn-danger"
@@ -62,8 +60,8 @@
 								aria-labelledby="delete" aria-hidden="true" style="margin-top:5rem">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
-										<div class="modal-header">
-											<h1 class="modal-title">Delete city</h1>
+										<div class="modal-header" style="justify-content:space-around">
+											<h1 class="modal-title">Delete Major</h1>
 										</div>
 										<div class="modal-body">
 											<dl class="row">
@@ -80,9 +78,8 @@
 													@Html.DisplayFor(model => item.Name)
 												</dd>
 											</dl>
-
 											<div class="modal-footer">
-												@using (Html.BeginForm("Delete", "Cities", FormMethod.Post)){
+												@using (Html.BeginForm("Delete", "MajorNames", FormMethod.Post)){
 												<input type="hidden" data-val="true"
 													data-val-required="The Id field is required." id="Id" name="Id"
 													value="@item.Id">

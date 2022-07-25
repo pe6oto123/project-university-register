@@ -7,6 +7,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 {
 	public class CitiesController : Controller
 	{
+		private const string _apiRoute = "api/Cities";
 		private HttpResponseMessage? _response;
 
 		// GET: Cities
@@ -19,7 +20,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 
 			ViewBag.CitySearch = citySearch;
 
-			_response = await Client.GetClient().GetAsync($"api/Cities?citySearch={citySearch}&searchParam={searchParam}");
+			_response = await Client.GetClient().GetAsync($"{_apiRoute}?citySearch={citySearch}&searchParam={searchParam}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
 
@@ -43,7 +44,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"api/Cities/", city);
+				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", city);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
 
@@ -55,9 +56,9 @@ namespace project_mvc.Controllers.DataControllers.Location
 		// GET: Cities/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"api/Cities/{id}");
+			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
 			if (!_response.IsSuccessStatusCode)
-				return NotFound();
+				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
 
 			var city = await _response.Content.ReadFromJsonAsync<City>();
 
@@ -73,9 +74,9 @@ namespace project_mvc.Controllers.DataControllers.Location
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"api/Cities/{id}", city);
+				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", city);
 				if (!_response.IsSuccessStatusCode)
-					return BadRequest();
+					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -87,7 +88,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"api/Cities/{id}");
+			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
 
