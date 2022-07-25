@@ -1,24 +1,22 @@
 ﻿@model IEnumerable<project_mvc.Database.Entities.University.Subject>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
 	@{
 	ViewData["Title"] = "Index";
 	}
-
-	<h1>Subjects</h1>
 
 	<div class="search-group">
 		@using (Html.BeginForm("Index", "Subjects", FormMethod.Get))
 		{
 		<div class="input-group-text" style="margin-bottom:1rem; padding-left:0.75rem">
-			@*<input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-				aria-describedby="search-addon" style="width:30%; flex:initial;" />*@
+			<h5 style="padding-right:0.5rem;padding-top: inherit;">Subjects</h5>
 			@Html.TextBox("subjectSearch", (string)ViewBag.SubjectSearch, new
 			{
 			@class = "form-control rounded",
 			autocomplete = "off",
 			type = "search",
 			placeholder = "Search",
-			style = "width:30%; flex:initial;",
+			style = "width:20%; flex:initial;",
 			aria_describedby = "search-addon",
 			aria_label = "Search"
 			})
@@ -28,43 +26,39 @@
 		</div>
 		}
 	</div>
-	<div class="container">
-		<div class="row">
-			<div class="col-12">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>
-								@Html.DisplayNameFor(model => model.Name)
-							</th>
-							<th style="text-align-last: center;table-layout: fixed;width: 5rem;">
-								<a type="button" class="btn btn-primary btn-sm btn-lg" asp-action="Create">
-									Add <i class="bi bi-file-earmark-plus-fill"></i>
-								</a>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var item in Model)
-						{
-						<tr>
-							<td>
-								@Html.DisplayFor(modelItem => item.Name)
-							</td>
-							<td style="text-align-last: center;">
-								<div class="btn-group">
-									<a type="button" class="btn btn-primary" asp-action="Details"
-										asp-route-id="@item.Id"><i class="bi bi-eye-fill"></i></a>
-									<a type="button" class="btn btn-success" asp-action="Edit"
-										asp-route-id="@item.Id"><i class="bi bi-pencil-fill"></i></a>
-									<a type="button" class="btn btn-danger" asp-action="Delete"
-										asp-route-id="@item.Id"><i class="bi bi-trash-fill"></i></a>
-								</div>
-							</td>
-						</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
+	<div class="container" style="padding:initial">
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.Name)
+					</th>
+					<th style="text-align-last: center;table-layout: fixed;width: 5rem;">
+						<a type="button" class="btn btn-primary btn-sm btn-lg" asp-action="Create">
+							Add <i class="bi bi-file-earmark-plus-fill"></i>
+						</a>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model)
+				{
+				<tr>
+					<td>
+						@Html.DisplayFor(modelItem => item.Name)
+					</td>
+					<td style="text-align-last: center;">
+						<div class="btn-group">
+							<a type="button" class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id"><i
+									class="bi bi-eye-fill"></i></a>
+							<a type="button" class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id"><i
+									class="bi bi-pencil-fill"></i></a>
+							<a type="button" class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i
+									class="bi bi-trash-fill"></i></a>
+						</div>
+					</td>
+				</tr>
+				}
+			</tbody>
+		</table>
 	</div>

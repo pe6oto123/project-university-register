@@ -4,21 +4,20 @@
 	@{
 	ViewData["Title"] = "Index";
 	}
-	<h1>Cities</h1>
 
 	<div class="search-group">
+
 		@using (Html.BeginForm("Index", "Cities", FormMethod.Get))
 		{
 		<div class="input-group-text" style="margin-bottom:1rem; padding-left:0.75rem">
-			@*<input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-				aria-describedby="search-addon" style="width:30%; flex:initial;" />*@
+			<h5 style="padding-right:0.5rem;padding-top: inherit;">Cities</h5>
 			@Html.TextBox("citySearch", (string)ViewBag.CitySearch, new
 			{
 			@class = "form-control rounded",
 			autocomplete = "off",
 			type = "search",
 			placeholder = "Search",
-			style = "width:30%; flex:initial;",
+			style = "width:20%; flex:initial;",
 			aria_describedby = "search-addon",
 			aria_label = "Search"
 			})
@@ -26,96 +25,134 @@
 				<i class="bi bi-search"></i>
 			</button>
 			<div class="btn-group" style="padding-left:1rem;">
-			<div class="form-check"  style="margin-left:2rem">
-				@Html.RadioButton("searchParam", "Name", true, new
-				{
-				@class="form-check-input",
-				type="radio",
-				id="searchName"
-				
-				})
-				<label class="form-check-label" for="searchName">
-					Name
-				</label>
-			</div>
-			<div class="form-check" style="margin-left:2rem">
-				@*<input class="form-check-input" type="radio" name="flexRadioDefault" id="searchRegion">*@
-				@Html.RadioButton("searchParam", "Region", false, new
-				{
-				@class="form-check-input",
-				type="radio",
-				id="searchRegion"
-				})
-				<label class="form-check-label" for="searchRegion">
-					Region
-				</label>
-			</div>
-			<div class="form-check" style="margin-left:2rem">
-				@Html.RadioButton("searchParam", "Population", false, new
-				{
-				@class="form-check-input",
-				type="radio",
-				id="searchPopulation"
-				})
-				<label class="form-check-label" for="searchPopulation">
-					Population
-				</label>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Name", @ViewBag.Search == "Name", new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="name"
+					})
+					<label class="form-check-label" for="name">
+						Name
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Region", @ViewBag.Search == "Region", new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="region"
+					})
+					<label class="form-check-label" for="region">
+						Region
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Population", @ViewBag.Search == "Population", new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="population"
+					})
+					<label class="form-check-label" for="population">
+						Population
+					</label>
+				</div>
 			</div>
 		</div>
-		</div>
-
-		
 		}
 	</div>
-	<div class="container">
-		<div class="row">
-			<div class="col-12">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>
-								@Html.DisplayNameFor(model => model.Name)
-							</th>
-							<th>
-								@Html.DisplayNameFor(model => model.Region)
-							</th>
-							<th>
-								@Html.DisplayNameFor(model => model.Population)
-							</th>
-							<th style="text-align-last: center;table-layout: fixed;width: 0;">
-								<a type="button" class="btn btn-primary btn-sm btn-lg" asp-action="Create">
-									Add <i class="bi bi-file-earmark-plus-fill"></i>
-								</a>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var item in Model)
-						{
-						<tr>
-							<td>
-								@Html.DisplayFor(modelItem => item.Name)
-							</td>
-							<td>
-								@Html.DisplayFor(modelItem => item.Region)
-							</td>
-							<td>
-								@Html.DisplayFor(modelItem => item.Population)
-							</td>
-							<td style="text-align-last: center;">
-								<div class="btn-group">
-									<a type="button" class="btn btn-primary" asp-action="Details"
-										asp-route-id="@item.Id"><i class="bi bi-eye-fill"></i></a>
-									<a type="button" class="btn btn-success" asp-action="Edit"
-										asp-route-id="@item.Id"><i class="bi bi-pencil-fill"></i></a>
-									<a type="button" class="btn btn-danger" asp-action="Delete"
-										asp-route-id="@item.Id"><i class="bi bi-trash-fill"></i></a>
+	<div class="container" style="padding:initial">
+		<table class="table table-bordered  table-striped">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.Name)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Region)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Population)
+					</th>
+					<th style="text-align-last: center;table-layout: fixed;width: 5rem;">
+						<a type="button" class="btn btn-primary btn-sm btn-lg" asp-action="Create">
+							Add <i class="bi bi-file-earmark-plus-fill"></i>
+						</a>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model)
+				{
+				<tr>
+					<td>
+						@Html.DisplayFor(modelItem => item.Name)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.Region)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.Population)
+					</td>
+					<td style="text-align-last: center;">
+						<div class="btn-group">
+							<a type="button" class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id">
+								<i class="bi bi-pencil-fill"></i></a>
+							<button id="delete-show-modal" type="button" class="btn btn-danger"
+								onclick="showDeleteModal(@item.Id)">
+								<i class="bi bi-trash-fill"></i></button>
+
+							<div id="delete-modal-id-@item.Id" class="modal fade" tabindex="-1" role="dialog"
+								aria-labelledby="delete" aria-hidden="true" style="margin-top:5rem">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header" style="justify-content:space-around">
+											<h1 class="modal-title">Delete City</h1>
+										</div>
+										<div class="modal-body">
+											<dl class="row">
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Id)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Id)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Region)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Region)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Population)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Population)
+												</dd>
+											</dl>
+
+											<div class="modal-footer">
+												@using (Html.BeginForm("Delete", "Cities", FormMethod.Post)){
+												<input type="hidden" data-val="true"
+													data-val-required="The Id field is required." id="Id" name="Id"
+													value="@item.Id">
+												<button type="submit" class="btn btn-danger">Delete</button>
+												<button type="button" class="btn btn-secondary"
+													onclick="hideDeleteModal(@item.Id)">Cancel</button>
+												}
+											</div>
+										</div>
+									</div>
 								</div>
-							</td>
-						</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
+							</div>
+					</td>
+				</tr>
+				}
+			</tbody>
+		</table>
 	</div>
+
+	@section scripts{
+	<script src="~/js/delete_popup.js" type="text/javascript"></script>
+	}

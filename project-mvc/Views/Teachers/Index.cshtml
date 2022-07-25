@@ -1,47 +1,128 @@
 ﻿@model IEnumerable<project_mvc.Database.Entities.People.Teacher>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 
-@{
-    ViewData["Title"] = "Index";
-}
+	@{
+	ViewData["Title"] = "Index";
+	}
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Position)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Position)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+	<div class="search-group">
+		@using (Html.BeginForm("Index", "Teachers", FormMethod.Get))
+		{
+		<div class="input-group-text" style="margin-bottom:1rem; padding-left:0.75rem">
+			<h5 style="padding-right:0.5rem;padding-top: inherit;">Teachers</h5>
+			@Html.TextBox("teacherSearch", (string)ViewBag.TeacherSearch, new
+			{
+			@class = "form-control rounded",
+			autocomplete = "off",
+			type = "search",
+			placeholder = "Search",
+			style = "width:20%; flex:initial;",
+			aria_describedby = "search-addon",
+			aria_label = "Search"
+			})
+			<button type="submit" class="btn btn-primary" style="margin-left:0.5rem">
+				<i class="bi bi-search"></i>
+			</button>
+			<div class="btn-group" style="padding-left:1rem;">
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "FirstName", true, new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="firstName"
+					})
+					<label class="form-check-label" for="firstName">
+						First Name
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "LastName", true, new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="lastName"
+					})
+					<label class="form-check-label" for="lastName">
+						Last Name
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Email", true, new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="email"
+					})
+					<label class="form-check-label" for="email">
+						Email
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Address", false, new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="address"
+					})
+					<label class="form-check-label" for="address">
+						Address
+					</label>
+				</div>
+			</div>
+		</div>
+		}
+	</div>
+	<div class="container" style="padding:initial">
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.FirstName)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.LastName)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Email)
+					</th>
+					<th>
+						@Html.DisplayName("Address")
+					</th>
+					<th style="text-align-last: center;table-layout: fixed;width: 5rem;">
+						<a type="button" class="btn btn-primary btn-sm btn-lg" asp-action="Create">
+							Add <i class="bi bi-file-earmark-plus-fill"></i>
+						</a>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model)
+				{
+				<tr>
+					<td>
+						@Html.DisplayFor(modelItem => item.FirstName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.LastName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.Email)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.Address!.Name)
+					</td>
+					<td style="text-align-last: center;">
+						<div class="btn-group">
+							<a type="button" class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id"><i
+									class="bi bi-eye-fill"></i></a>
+							<a type="button" class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id"><i
+									class="bi bi-pencil-fill"></i></a>
+							<a type="button" class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i
+									class="bi bi-trash-fill"></i></a>
+						</div>
+					</td>
+				</tr>
+				}
+			</tbody>
+		</table>
+	</div>

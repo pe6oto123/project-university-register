@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using project_mvc.Database.Contexts;
 using project_mvc.Database.Entities.Access;
 
 namespace project_mvc.Controllers.DataControllers.Access
@@ -156,3 +155,4 @@ namespace project_mvc.Controllers.DataControllers.Access
 		}
 	}
 }
+*/
