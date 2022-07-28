@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using project_mvc.ApiClient;
-using project_mvc.Database.Entities.Location;
+using project_mvc.Models.DataModels.Location;
 
 namespace project_mvc.Controllers.DataControllers.Location
 {
@@ -16,7 +16,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 			if (searchParam != null)
 				ViewBag.Search = searchParam;
 			else
-				ViewBag.Search = "Name";
+				ViewBag.Search = "CityName";
 
 			ViewBag.CitySearch = citySearch;
 
@@ -40,7 +40,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("Id,Name,Region,Population")] City city)
+		public async Task<IActionResult> Create([Bind("Id,CityName,Region,Population")] City city)
 		{
 			if (ModelState.IsValid)
 			{
@@ -70,7 +70,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Region,Population")] City city)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,CityName,Region,Population")] City city)
 		{
 			if (ModelState.IsValid)
 			{

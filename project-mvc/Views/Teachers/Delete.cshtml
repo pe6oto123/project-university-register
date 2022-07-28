@@ -1,4 +1,4 @@
-﻿@model project_mvc.Database.Entities.People.Teacher
+﻿@model project_mvc.Models.DataModels.People.Teacher
 
 @{
     ViewData["Title"] = "Delete";
@@ -10,7 +10,7 @@
 <div>
     <h4>Teacher</h4>
     <hr />
-    <dl class="row">
+    <dl class="row" style="flex-direction: column">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
         </dt>
@@ -27,7 +27,7 @@
             @Html.DisplayNameFor(model => model.Email)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address!.Name)
+            @Html.DisplayFor(model => model.Address!.AddressName)
         </dd>
     </dl>
     

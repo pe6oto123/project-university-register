@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using project_api._Util;
 using project_api.Database.Contexts;
 using project_api.Database.Entities.Location;
-using System.Reflection;
 
 namespace project_api.Controllers.Info
 {
@@ -19,7 +19,7 @@ namespace project_api.Controllers.Info
 
 		// GET: api/Cities
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<City>>> GetCity(string? citySearch = null, string? searchParam = "Name")
+		public async Task<ActionResult<IEnumerable<City>>> GetCity(string? citySearch = null, string? searchParam = "CityName")
 		{
 			if (_context.City == null)
 			{
@@ -27,18 +27,9 @@ namespace project_api.Controllers.Info
 			}
 
 			IEnumerable<City> cities = await _context.City.ToListAsync();
-			PropertyInfo? propertyInfo;
-			try
-			{
-				propertyInfo = typeof(City).GetProperty(searchParam!);
-			}
-			catch (ArgumentNullException)
-			{
-				propertyInfo = typeof(City).GetProperty("Name");
-			}
 
 			if (!string.IsNullOrEmpty(citySearch))
-				cities = cities.Where(s => propertyInfo!.GetValue(s)!.ToString()!.Contains(citySearch));
+				cities = cities.Where(s => HelperClass.GetPropertyValue(s, searchParam!)!.ToString()!.Contains(citySearch));
 
 			return cities.ToList();
 		}
@@ -104,7 +95,7 @@ namespace project_api.Controllers.Info
 			_context.City.Add(city);
 			await _context.SaveChangesAsync();
 
-			return CreatedAtAction("GetCity", new { id = city.Id }, city);
+			return CreatedAtAction("GetCity", new { cityid = city.Id }, city);
 		}
 
 		// DELETE: api/Cities/5
@@ -121,6 +112,7 @@ namespace project_api.Controllers.Info
 				return NotFound();
 			}
 
+			await _context.Address.Include(s => s.City).Where(s => s.City!.Id == id).LoadAsync();
 			_context.City.Remove(city);
 			await _context.SaveChangesAsync();
 

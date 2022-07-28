@@ -23,13 +23,16 @@ namespace project_api.Database.Entities.People
 		public string? FacultyNumber { get; set; }
 
 		[Required]
+		public int? AddressId { get; set; }
 		public virtual Address? Address { get; set; }
 
 		[Required]
+		public int? FacultyId { get; set; }
 		public virtual Faculty? Faculty { get; set; }
 
 		[Required]
-		public virtual Major? Major { get; set; }
+		public int? CourseId { get; set; }
+		public virtual Course? Course { get; set; }
 
 		public virtual ICollection<StudentsSubjects>? StudentsSubjects { get; set; }
 	}
@@ -56,6 +59,6 @@ namespace project_api.Database.Entities.People
 		public int Id { get; set; }
 
 		[Required, MaxLength(20)]
-		public string? Name { get; set; }
+		public string? GradeName { get; set; }
 	}
 }

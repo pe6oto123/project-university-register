@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace project_mvc.Database.Entities.Location
+namespace project_mvc.Models.DataModels.Location
 {
 	public class Address
 	{
@@ -9,8 +9,9 @@ namespace project_mvc.Database.Entities.Location
 
 		[Required]
 		[StringLength(50)]
-		public string? Name { get; set; }
+		public string? AddressName { get; set; }
 
+		public int? CityId { get; set; }
 		public virtual City? City { get; set; }
 	}
 }

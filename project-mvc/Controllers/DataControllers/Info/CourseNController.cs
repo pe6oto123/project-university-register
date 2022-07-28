@@ -1,90 +1,90 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using project_mvc.ApiClient;
-using project_mvc.Database.Entities.University;
+using project_mvc.Models.DataModels.University;
 
 namespace project_mvc.Controllers.DataControllers.Info
 {
-	public class MajorNamesController : Controller
+	public class CourseNController : Controller
 	{
-		private const string _apiRoute = "api/MajorNames";
+		private const string _apiRoute = "api/CourseN";
 		private HttpResponseMessage? _response;
 
-		// GET: MajorNames
+		// GET: CourseN
 		public async Task<IActionResult> Index(string majorSearch)
 		{
-			ViewBag.MajorSearch = majorSearch;
+			ViewBag.CourseSearch = majorSearch;
 
 			_response = await Client.GetClient().GetAsync($"{_apiRoute}?majorSearch={majorSearch}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
 
-			var majorNames = await _response.Content.ReadFromJsonAsync<IEnumerable<MajorName>>();
+			var courseN = await _response.Content.ReadFromJsonAsync<IEnumerable<CourseN>>();
 
-			return View(majorNames);
+			return View(courseN);
 		}
 
-		// GET: MajorNames/Create
+		// GET: CourseN/Create
 		public IActionResult Create()
 		{
 			return View();
 		}
 
-		// POST: MajorNames/Create
+		// POST: CourseN/Create
 		// To protect from overposting attacks, enable the specific properties you want to bind to.
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("Id,Name")] MajorName majorName)
+		public async Task<IActionResult> Create([Bind("Id,CourseName")] CourseN courseN)
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", majorName);
+				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", courseN);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
 
 				return RedirectToAction(nameof(Index));
 			}
-			return View(majorName);
+			return View(courseN);
 		}
 
-		// GET: MajorNames/Edit/5
+		// GET: CourseN/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
 			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return NotFound();
 
-			var majorName = await _response.Content.ReadFromJsonAsync<MajorName>();
+			var courseName = await _response.Content.ReadFromJsonAsync<CourseN>();
 
-			return View(majorName);
+			return View(courseName);
 		}
 
-		// POST: MajorNames/Edit/5
+		// POST: CourseN/Edit/5
 		// To protect from overposting attacks, enable the specific properties you want to bind to.
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] MajorName majorName)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName")] CourseN courseN)
 		{
-			if (id != majorName.Id)
+			if (id != courseN.Id)
 			{
 				return NotFound();
 			}
 
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", majorName);
+				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", courseN);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
 
 				return RedirectToAction(nameof(Index));
 			}
 
-			return View(majorName);
+			return View(courseN);
 		}
 
-		// POST: MajorNames/Delete/5
+		// POST: CourseN/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)

@@ -1,164 +1,126 @@
-﻿/*using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using project_mvc.Database.Contexts;
-using project_mvc.Database.Entities.University;
+using project_mvc.ApiClient;
+using project_mvc.Models.DataModels.Location;
+using project_mvc.Models.DataModels.University;
 
 namespace project_mvc.Controllers.DataControllers.University
 {
-    public class FacultiesController : Controller
-    {
-        private readonly DatabaseContext _context;
+	public class FacultiesController : Controller
+	{
+		private const string _apiRoute = "api/Faculties";
+		private HttpResponseMessage? _response;
 
-        public FacultiesController(DatabaseContext context)
-        {
-            _context = context;
-        }
+		// GET: Faculties
+		public async Task<IActionResult> Index(string facultySearch, string searchParam)
+		{
+			if (searchParam != null)
+				ViewBag.Search = searchParam;
+			else
+				ViewBag.Search = "FacultyName";
 
-        // GET: Faculties
-        public async Task<IActionResult> Index()
-        {
-              return _context.Faculty != null ? 
-                          View(await _context.Faculty.ToListAsync()) :
-                          Problem("Entity set 'DatabaseContext.Faculty'  is null.");
-        }
+			ViewBag.FacultySearch = facultySearch;
 
-        // GET: Faculties/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Faculty == null)
-            {
-                return NotFound();
-            }
+			_response = await Client.GetClient().GetAsync($"{_apiRoute}?facultySearch={facultySearch}&searchParam={searchParam}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-            var faculty = await _context.Faculty
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (faculty == null)
-            {
-                return NotFound();
-            }
+			var faculties = await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>();
 
-            return View(faculty);
-        }
+			return View(faculties);
+		}
 
-        // GET: Faculties/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+		/*// GET: Faculties/Details/5
+		public async Task<IActionResult> Details(int? id)
+		{
+			if (id == null || _context.Faculty == null)
+			{
+				return NotFound();
+			}
 
-        // POST: Faculties/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Faculty faculty)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(faculty);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(faculty);
-        }
+			var faculty = await _context.Faculty
+				.FirstOrDefaultAsync(m => m.Id == id);
+			if (faculty == null)
+			{
+				return NotFound();
+			}
 
-        // GET: Faculties/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Faculty == null)
-            {
-                return NotFound();
-            }
+			return View(faculty);
+		}*/
 
-            var faculty = await _context.Faculty.FindAsync(id);
-            if (faculty == null)
-            {
-                return NotFound();
-            }
-            return View(faculty);
-        }
+		// GET: Faculties/Create
+		public async Task<IActionResult> Create()
+		{
+			_response = await Client.GetClient().GetAsync($"api/Cities");
+			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(), "Id", "CityName");
 
-        // POST: Faculties/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Faculty faculty)
-        {
-            if (id != faculty.Id)
-            {
-                return NotFound();
-            }
+			return View();
+		}
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(faculty);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FacultyExists(faculty.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(faculty);
-        }
+		// POST: Faculties/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create([Bind("Id,FacultyName,AddressId,Address,Address.CityId")] Faculty faculty)
+		{
+			if (ModelState.IsValid)
+			{
+				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", faculty);
+				string test = await _response.Content.ReadAsStringAsync();
+				if (!_response.IsSuccessStatusCode)
+					return Problem(await _response.Content.ReadAsStringAsync());
 
-        // GET: Faculties/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Faculty == null)
-            {
-                return NotFound();
-            }
+				return RedirectToAction(nameof(Index));
+			}
+			return View(faculty);
+		}
 
-            var faculty = await _context.Faculty
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (faculty == null)
-            {
-                return NotFound();
-            }
+		// GET: Faculties/Edit/5
+		public async Task<IActionResult> Edit(int? id)
+		{
+			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+			var faculty = await _response.Content.ReadFromJsonAsync<Faculty>();
 
-            return View(faculty);
-        }
+			_response = await Client.GetClient().GetAsync($"api/Cities/");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-        // POST: Faculties/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Faculty == null)
-            {
-                return Problem("Entity set 'DatabaseContext.Faculty'  is null.");
-            }
-            var faculty = await _context.Faculty.FindAsync(id);
-            if (faculty != null)
-            {
-                _context.Faculty.Remove(faculty);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(), "Id", "CityName");
 
-        private bool FacultyExists(int id)
-        {
-          return (_context.Faculty?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-    }
+			return View(faculty);
+		}
+
+		// POST: Faculties/Edit/5
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(int id, [Bind("Id,FacultyName,AddressId,Address,Address.CityId")] Faculty faculty)
+		{
+			if (ModelState.IsValid)
+			{
+				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", faculty);
+				if (!_response.IsSuccessStatusCode)
+					return Problem(await _response.Content.ReadAsStringAsync());
+
+				return RedirectToAction(nameof(Index));
+			}
+			return View(faculty);
+		}
+
+		// POST: Faculties/Delete/5
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Delete(int id)
+		{
+			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			return RedirectToAction(nameof(Index));
+		}
+	}
 }
-*/

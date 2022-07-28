@@ -1,4 +1,4 @@
-﻿@model IEnumerable<project_mvc.Database.Entities.University.Major>
+﻿@model IEnumerable<project_mvc.Models.DataModels.University.Course>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 
 	@{
@@ -6,11 +6,11 @@
 	}
 
 	<div class="search-group">
-		@using (Html.BeginForm("Index", "Majors", FormMethod.Get))
+		@using (Html.BeginForm("Index", "Courses", FormMethod.Get))
 		{
 		<div class="input-group-text" style="margin-bottom:1rem; padding-left:0.75rem">
-			<h5 style="padding-right:0.5rem;padding-top: inherit;">Majors</h5>
-			@Html.TextBox("majorSearch", (string)ViewBag.MajorSearch, new
+			<h5 style="padding-right:0.5rem;padding-top: inherit;">Courses</h5>
+			@Html.TextBox("majorSearch", (string)ViewBag.CourseSearch, new
 			{
 			@class = "form-control rounded",
 			autocomplete = "off",
@@ -55,7 +55,7 @@
 			<thead>
 				<tr>
 					<th>
-						@Html.DisplayNameFor(model => model.MajorName!.Name)
+						@Html.DisplayNameFor(model => model.CourseN!.CourseName)
 					</th>
 					<th>
 						@Html.DisplayNameFor(model => model.Enrolment)
@@ -72,12 +72,12 @@
 				{
 				<tr>
 					<td>
-						@Html.DisplayFor(modelItem => item.MajorName!.Name)
+						@Html.DisplayFor(modelItem => item.CourseN!.CourseName)
 					</td>
 					<td>
 						@Html.DisplayFor(modelItem => item.Enrolment)
 					</td>
-					<td style="text-align-last: center;">
+					<td class="align-middle">
 						<div class="btn-group">
 							<a type="button" class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id"><i
 									class="bi bi-eye-fill"></i></a>

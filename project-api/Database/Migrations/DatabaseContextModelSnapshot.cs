@@ -9,7 +9,7 @@ using project_api.Database.Contexts;
 
 namespace project_api.Database.Migrations
 {
-	[DbContext(typeof(DatabaseContext))]
+    [DbContext(typeof(DatabaseContext))]
     partial class DatabaseContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -40,7 +40,8 @@ namespace project_api.Database.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("UserRoleId")
+                    b.Property<int?>("UserRoleId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -60,7 +61,7 @@ namespace project_api.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("UserRoleName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -75,13 +76,13 @@ namespace project_api.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("CityId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("AddressName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -96,7 +97,7 @@ namespace project_api.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("CityName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
@@ -119,7 +120,7 @@ namespace project_api.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("GradeName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
@@ -135,10 +136,12 @@ namespace project_api.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("AddressId")
+                    b.Property<int?>("AddressId")
+                        .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<int>("FacultyId")
+                    b.Property<int?>("FacultyId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("FacultyNumber")
@@ -156,7 +159,8 @@ namespace project_api.Database.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("MajorId")
+                    b.Property<int?>("CourseId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -165,7 +169,7 @@ namespace project_api.Database.Migrations
 
                     b.HasIndex("FacultyId");
 
-                    b.HasIndex("MajorId");
+                    b.HasIndex("CourseId");
 
                     b.ToTable("Student");
                 });
@@ -198,7 +202,8 @@ namespace project_api.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("AddressId")
+                    b.Property<int?>("AddressId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -206,7 +211,8 @@ namespace project_api.Database.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("FacultyId")
+                    b.Property<int?>("FacultyId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
@@ -228,16 +234,59 @@ namespace project_api.Database.Migrations
                     b.ToTable("Teacher");
                 });
 
+            modelBuilder.Entity("project_api.Database.Entities.University.Course", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CourseNId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Enrolment")
+                        .IsRequired()
+                        .HasColumnType("date");
+
+                    b.Property<int>("FacultyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseNId");
+
+                    b.HasIndex("FacultyId");
+
+                    b.ToTable("Course");
+                });
+
+            modelBuilder.Entity("project_api.Database.Entities.University.CourseN", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("CourseName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CourseN");
+                });
+
             modelBuilder.Entity("project_api.Database.Entities.University.Faculty", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("AddressId")
+                    b.Property<int?>("AddressId")
+                        .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FacultyName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
@@ -251,56 +300,15 @@ namespace project_api.Database.Migrations
 
             modelBuilder.Entity("project_api.Database.Entities.University.FacultyNum", b =>
                 {
-                    b.Property<int>("MajorId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<int>("NextFreeId")
                         .HasColumnType("int");
 
-                    b.HasKey("MajorId");
+                    b.HasKey("CourseId");
 
                     b.ToTable("FacultyNum");
-                });
-
-            modelBuilder.Entity("project_api.Database.Entities.University.Major", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Enrolment")
-                        .IsRequired()
-                        .HasColumnType("date");
-
-                    b.Property<int>("FacultyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MajorNameId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyId");
-
-                    b.HasIndex("MajorNameId");
-
-                    b.ToTable("Major");
-                });
-
-            modelBuilder.Entity("project_api.Database.Entities.University.MajorName", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MajorName");
                 });
 
             modelBuilder.Entity("project_api.Database.Entities.University.Schedule", b =>
@@ -309,7 +317,8 @@ namespace project_api.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("MajorId")
+                    b.Property<int?>("CourseId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("Year")
@@ -318,7 +327,7 @@ namespace project_api.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MajorId");
+                    b.HasIndex("CourseId");
 
                     b.ToTable("Schedule");
                 });
@@ -329,7 +338,7 @@ namespace project_api.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("SubjectName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
@@ -415,9 +424,9 @@ namespace project_api.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("project_api.Database.Entities.University.Major", "Major")
+                    b.HasOne("project_api.Database.Entities.University.Course", "Course")
                         .WithMany()
-                        .HasForeignKey("MajorId")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -425,7 +434,7 @@ namespace project_api.Database.Migrations
 
                     b.Navigation("Faculty");
 
-                    b.Navigation("Major");
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("project_api.Database.Entities.People.StudentsSubjects", b =>
@@ -472,6 +481,25 @@ namespace project_api.Database.Migrations
                     b.Navigation("Faculty");
                 });
 
+            modelBuilder.Entity("project_api.Database.Entities.University.Course", b =>
+                {
+                    b.HasOne("project_api.Database.Entities.University.CourseN", "CourseN")
+                        .WithMany()
+                        .HasForeignKey("CourseNId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("project_api.Database.Entities.University.Faculty", "Faculty")
+                        .WithMany()
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseN");
+
+                    b.Navigation("Faculty");
+                });
+
             modelBuilder.Entity("project_api.Database.Entities.University.Faculty", b =>
                 {
                     b.HasOne("project_api.Database.Entities.Location.Address", "Address")
@@ -485,43 +513,24 @@ namespace project_api.Database.Migrations
 
             modelBuilder.Entity("project_api.Database.Entities.University.FacultyNum", b =>
                 {
-                    b.HasOne("project_api.Database.Entities.University.Major", "Major")
+                    b.HasOne("project_api.Database.Entities.University.Course", "Course")
                         .WithOne()
-                        .HasForeignKey("project_api.Database.Entities.University.FacultyNum", "MajorId")
+                        .HasForeignKey("project_api.Database.Entities.University.FacultyNum", "CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Major");
-                });
-
-            modelBuilder.Entity("project_api.Database.Entities.University.Major", b =>
-                {
-                    b.HasOne("project_api.Database.Entities.University.Faculty", "Faculty")
-                        .WithMany()
-                        .HasForeignKey("FacultyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("project_api.Database.Entities.University.MajorName", "MajorName")
-                        .WithMany()
-                        .HasForeignKey("MajorNameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Faculty");
-
-                    b.Navigation("MajorName");
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("project_api.Database.Entities.University.Schedule", b =>
                 {
-                    b.HasOne("project_api.Database.Entities.University.Major", "Major")
+                    b.HasOne("project_api.Database.Entities.University.Course", "Course")
                         .WithMany()
-                        .HasForeignKey("MajorId")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Major");
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("ScheduleSubject", b =>

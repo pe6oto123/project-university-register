@@ -1,15 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace project_api.Database.Entities.University
+namespace project_mvc.Models.DataModels.University
 {
-	public class Major
+	public class Course
 	{
 		[Key]
 		public int Id { get; set; }
 
 		[Required]
-		public virtual MajorName? MajorName { get; set; }
+		public int? CourseNId { get; set; }
+		public virtual CourseN? CourseN { get; set; }
 
 		[Required, Column(TypeName = "date")]
 		public DateTime? Enrolment { get; set; }
@@ -21,21 +22,21 @@ namespace project_api.Database.Entities.University
 	public class FacultyNum
 	{
 		[Key]
-		public int MajorId { get; set; }
+		public int CourseId { get; set; }
 
-		public virtual Major? Major { get; set; }
+		public virtual Course? Course { get; set; }
 
 		[Required]
 		public int NextFreeId { get; set; }
 	}
 
-	public class MajorName
+	public class CourseN
 	{
 		[Key]
 		public int Id { get; set; }
 
 		[Required, StringLength(50)]
-		public string? Name { get; set; }
+		public string? CourseName { get; set; }
 	}
 
 	public class Schedule
@@ -44,7 +45,8 @@ namespace project_api.Database.Entities.University
 		public int Id { get; set; }
 
 		[Required]
-		public virtual Major? Major { get; set; }
+		public int? CourseId { get; set; }
+		public virtual Course? Course { get; set; }
 
 		[Required]
 		public int? Year { get; set; }

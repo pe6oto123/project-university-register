@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using project_mvc.ApiClient;
-using project_mvc.Database.Entities.University;
+using project_mvc.Models.DataModels.University;
 
 namespace project_mvc.Controllers.DataControllers.University
 {
@@ -35,7 +35,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("Id,Name")] Subject subject)
+		public async Task<IActionResult> Create([Bind("Id,SubjectName")] Subject subject)
 		{
 			if (ModelState.IsValid)
 			{
@@ -65,7 +65,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Subject subject)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName")] Subject subject)
 		{
 			if (ModelState.IsValid)
 			{

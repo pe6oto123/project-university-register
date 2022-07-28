@@ -22,9 +22,11 @@ namespace project_api.Database.Entities.People
 		public string? Email { get; set; }
 
 		[Required]
+		public int? AddressId { get; set; }
 		public virtual Address? Address { get; set; }
 
 		[Required]
+		public int? FacultyId { get; set; }
 		public virtual Faculty? Faculty { get; set; }
 
 		public virtual ICollection<Subject>? Subjects { get; set; }

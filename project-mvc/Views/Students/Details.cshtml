@@ -1,4 +1,4 @@
-﻿@model project_mvc.Database.Entities.People.Student
+﻿@model project_mvc.Models.DataModels.People.Student
 
 @{
     ViewData["Title"] = "Details";
@@ -9,7 +9,7 @@
 <div>
     <h4>Student</h4>
     <hr />
-    <dl class="row">
+    <dl class="row" style="flex-direction: column">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
         </dt>

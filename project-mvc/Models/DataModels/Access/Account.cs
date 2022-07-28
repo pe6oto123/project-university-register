@@ -1,7 +1,7 @@
-﻿using project_mvc.Database.Entities.People;
+﻿using project_mvc.Models.DataModels.People;
 using System.ComponentModel.DataAnnotations;
 
-namespace project_mvc.Database.Entities.Access
+namespace project_mvc.Models.DataModels.Access
 {
 	public class Account
 	{
@@ -16,10 +16,13 @@ namespace project_mvc.Database.Entities.Access
 		public string? Password { get; set; }
 
 		[Required]
+		public int? UserRoleId { get; set; }
 		public virtual UserRole? UserRole { get; set; }
 
+		public int? TeacherId { get; set; }
 		public virtual Teacher? Teacher { get; set; }
 
+		public int? StudentId { get; set; }
 		public virtual Student? Student { get; set; }
 	}
 
@@ -29,6 +32,6 @@ namespace project_mvc.Database.Entities.Access
 		public int Id { get; set; }
 
 		[Required]
-		public string? Name { get; set; }
+		public string? UserRoleName { get; set; }
 	}
 }

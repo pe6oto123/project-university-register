@@ -10,7 +10,7 @@ namespace project_api.Database.Entities.University
 
 		[Required]
 		[StringLength(50)]
-		public string? Name { get; set; }
+		public string? SubjectName { get; set; }
 
 		public virtual ICollection<Schedule>? Schedule { get; set; }
 

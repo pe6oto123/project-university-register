@@ -28,7 +28,7 @@ namespace project_api.Controllers.University
 			IEnumerable<Subject> subjects = await _context.Subject.ToListAsync();
 
 			if (!string.IsNullOrEmpty(subjectSearch))
-				subjects = subjects.Where(s => s.Name!.Contains(subjectSearch));
+				subjects = subjects.Where(s => s.SubjectName!.Contains(subjectSearch));
 
 			return subjects.ToList();
 		}

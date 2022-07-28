@@ -10,9 +10,10 @@ namespace project_api.Database.Entities.University
 
 		[Required]
 		[StringLength(50)]
-		public string? Name { get; set; }
+		public string? FacultyName { get; set; }
 
 		[Required]
+		public int? AddressId { get; set; }
 		public virtual Address? Address { get; set; }
 	}
 }

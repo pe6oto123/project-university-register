@@ -9,8 +9,9 @@ namespace project_api.Database.Entities.Location
 
 		[Required]
 		[StringLength(50)]
-		public string? Name { get; set; }
+		public string? AddressName { get; set; }
 
+		public int? CityId { get; set; }
 		public virtual City? City { get; set; }
 	}
 }

@@ -18,7 +18,8 @@ namespace project_api.Database.Contexts
 		public DbSet<Account> Account => Set<Account>();
 		public DbSet<UserRole> UserRole => Set<UserRole>();
 		public DbSet<Faculty> Faculty => Set<Faculty>();
-		public DbSet<Major> Major => Set<Major>();
+		public DbSet<Course> Course => Set<Course>();
+		public DbSet<CourseN> CourseN => Set<CourseN>();
 		public DbSet<Subject> Subject => Set<Subject>();
 		public DbSet<Student> Student => Set<Student>();
 		public DbSet<StudentsSubjects> StudentsSubjects => Set<StudentsSubjects>();
@@ -64,7 +65,7 @@ namespace project_api.Database.Contexts
 				   .OnDelete(DeleteBehavior.NoAction);
 
 				modelBuilder.Entity<Student>()
-				   .HasOne(s => s.Major)
+				   .HasOne(s => s.Course)
 				   .WithMany()
 				   .OnDelete(DeleteBehavior.NoAction);
 
@@ -94,10 +95,8 @@ namespace project_api.Database.Contexts
 
 			modelBuilder
 				.Entity<FacultyNum>()
-				.HasOne(s => s.Major)
+				.HasOne(s => s.Course)
 				.WithOne();
 		}
-
-		public DbSet<MajorName>? MajorName { get; set; }
 	}
 }
