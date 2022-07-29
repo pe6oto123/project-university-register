@@ -16,6 +16,7 @@ namespace project_api.Database.Entities.University
 		public DateTime? Enrolment { get; set; }
 
 		[Required]
+		public int? FacultyId { get; set; }
 		public virtual Faculty? Faculty { get; set; }
 	}
 

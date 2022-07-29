@@ -140,6 +140,10 @@ namespace project_api.Database.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
+                    b.Property<int?>("CourseId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
                     b.Property<int?>("FacultyId")
                         .IsRequired()
                         .HasColumnType("int");
@@ -159,17 +163,13 @@ namespace project_api.Database.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int?>("CourseId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
 
-                    b.HasIndex("FacultyId");
-
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("FacultyId");
 
                     b.ToTable("Student");
                 });
@@ -248,7 +248,8 @@ namespace project_api.Database.Migrations
                         .IsRequired()
                         .HasColumnType("date");
 
-                    b.Property<int>("FacultyId")
+                    b.Property<int?>("FacultyId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -418,23 +419,23 @@ namespace project_api.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("project_api.Database.Entities.University.Faculty", "Faculty")
-                        .WithMany()
-                        .HasForeignKey("FacultyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("project_api.Database.Entities.University.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("project_api.Database.Entities.University.Faculty", "Faculty")
+                        .WithMany()
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Address");
 
-                    b.Navigation("Faculty");
-
                     b.Navigation("Course");
+
+                    b.Navigation("Faculty");
                 });
 
             modelBuilder.Entity("project_api.Database.Entities.People.StudentsSubjects", b =>

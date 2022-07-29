@@ -10,7 +10,7 @@
 		{
 		<div class="input-group-text" style="margin-bottom:1rem; padding-left:0.75rem">
 			<h5 style="padding-right:0.5rem;padding-top: inherit;">Courses</h5>
-			@Html.TextBox("majorSearch", (string)ViewBag.CourseSearch, new
+			@Html.TextBox("courseSearch", (string)ViewBag.CourseSearch, new
 			{
 			@class = "form-control rounded",
 			autocomplete = "off",
@@ -25,18 +25,29 @@
 			</button>
 			<div class="btn-group" style="padding-left:1rem;">
 				<div class="form-check" style="margin-left:2rem">
-					@Html.RadioButton("searchParam", "Name", true, new
+					@Html.RadioButton("searchParam", "CourseN.CourseName",  @ViewBag.Search == "CourseN.CourseName", new
 					{
 					@class="form-check-input",
 					type="radio",
-					id="name"
+					id="courseName"
 					})
 					<label class="form-check-label" for="searchName">
 						Name
 					</label>
 				</div>
 				<div class="form-check" style="margin-left:2rem">
-					@Html.RadioButton("searchParam", "Enrolment Date", false, new
+					@Html.RadioButton("searchParam", "Faculty.FacultyName",  @ViewBag.Search == "Faculty.FacultyName", new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="courseName"
+					})
+					<label class="form-check-label" for="searchName">
+						Faculty
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Enrolment",  @ViewBag.Search == "Enrolment", new
 					{
 					@class="form-check-input",
 					type="radio",
@@ -58,6 +69,9 @@
 						@Html.DisplayNameFor(model => model.CourseN!.CourseName)
 					</th>
 					<th>
+						@Html.DisplayNameFor(model => model.Faculty!.FacultyName)
+					</th>
+					<th>
 						@Html.DisplayNameFor(model => model.Enrolment)
 					</th>
 					<th style="text-align-last: center;table-layout: fixed;width: 5rem;">
@@ -75,6 +89,9 @@
 						@Html.DisplayFor(modelItem => item.CourseN!.CourseName)
 					</td>
 					<td>
+						@Html.DisplayFor(modelItem => item.Faculty!.FacultyName)
+					</td>
+					<td>
 						@Html.DisplayFor(modelItem => item.Enrolment)
 					</td>
 					<td class="align-middle">
@@ -83,8 +100,57 @@
 									class="bi bi-eye-fill"></i></a>
 							<a type="button" class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id"><i
 									class="bi bi-pencil-fill"></i></a>
-							<a type="button" class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i
-									class="bi bi-trash-fill"></i></a>
+							<button id="delete-show-modal" type="button" class="btn btn-danger"
+								onclick="showDeleteModal(@item.Id)">
+								<i class="bi bi-trash-fill"></i></button>
+							<div id="delete-modal-id-@item.Id" class="modal fade" tabindex="-1" role="dialog"
+								aria-labelledby="delete" aria-hidden="true" style="margin-top:5rem">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header" style="justify-content:space-around">
+											<h1 class="modal-title">Delete Course</h1>
+										</div>
+										<div class="modal-body">
+											<dl class="row" style="flex-direction: column">
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Id)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Id)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.CourseN!.CourseName)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.CourseN!.CourseName)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Faculty!.FacultyName)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Faculty!.FacultyName)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Enrolment)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Enrolment)
+												</dd>
+											</dl>
+											<div class="modal-footer">
+												@using (Html.BeginForm("Delete", "Courses", FormMethod.Post)){
+												<input type="hidden" data-val="true"
+													data-val-required="The Id field is required." id="Id" name="Id"
+													value="@item.Id">
+												<button type="submit" class="btn btn-danger">Delete</button>
+												<button type="button" class="btn btn-secondary"
+													onclick="hideDeleteModal(@item.Id)">Cancel</button>
+												}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</td>
 				</tr>
@@ -92,3 +158,7 @@
 			</tbody>
 		</table>
 	</div>
+
+	@section scripts{
+	<script src="~/js/delete_popup.js" type="text/javascript"></script>
+	}

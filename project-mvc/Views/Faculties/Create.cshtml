@@ -13,7 +13,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FacultyName" class="control-label" style="font-weight:bold"></label>
-                <input asp-for="FacultyName" class="form-control" />
+                <input asp-for="FacultyName" class="form-control" autocomplete="off" />
                 <span asp-validation-for="FacultyName" class="text-danger"></span>
             </div>
              <div class="form-group">
@@ -24,7 +24,7 @@
               <div class="form-group">
                    <input type="hidden" asp-for="AddressId" value="0" />
                   @Html.LabelFor(model => model.Address!.CityId, "City",htmlAttributes: new { @class = "control-label", style="font-weight:bold" })
-                  @Html.DropDownListFor(model => model.Address!.CityId, ViewBag.Cities as IEnumerable<SelectListItem>, new { @class = "form-control", @onChange="test(this)"})
+                  @Html.DropDownListFor(model => model.Address!.CityId, ViewBag.Cities as IEnumerable<SelectListItem>, new { @class = "form-control"})
                   @Html.ValidationMessageFor(model => model.Address!.CityId, "", new { @class = "text-danger" })
             </div>
             <div class="form-group" style="margin-top:0.5rem; float:right">

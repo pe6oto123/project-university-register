@@ -8,13 +8,13 @@
 			{
 				if (propertyName.Contains('.'))
 				{
-					var temp = propertyName.Split(new char[] { '.' }, 2);
-					return GetPropertyValue(GetPropertyValue(obj, temp[0])!, temp[1]);
+					var propertySegment = propertyName.Split(new char[] { '.' }, 2);
+					return GetPropertyValue(GetPropertyValue(obj, propertySegment[0])!, propertySegment[1]);
 				}
 				else
 				{
 					var prop = obj.GetType().GetProperty(propertyName);
-					return prop?.GetValue(obj, null);
+					return prop?.GetValue(obj);
 				}
 			}
 			catch (NullReferenceException)

@@ -18,7 +18,7 @@ namespace project_api.Controllers.Info
 
 		// GET: api/CourseN
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<CourseN>>> GetCourseN(string? majorSearch = null)
+		public async Task<ActionResult<IEnumerable<CourseN>>> GetCourseN(string? courseSearch = null)
 		{
 			if (_context.CourseN == null)
 			{
@@ -27,8 +27,8 @@ namespace project_api.Controllers.Info
 
 			IEnumerable<CourseN> courseN = await _context.CourseN.ToListAsync();
 
-			if (!string.IsNullOrEmpty(majorSearch))
-				courseN = courseN.Where(s => s.CourseName!.Contains(majorSearch));
+			if (!string.IsNullOrEmpty(courseSearch))
+				courseN = courseN.Where(s => s.CourseName!.Contains(courseSearch));
 
 			return courseN.ToList();
 		}

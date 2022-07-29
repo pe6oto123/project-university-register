@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace project_mvc.Models.DataModels.University
 {
@@ -12,10 +11,11 @@ namespace project_mvc.Models.DataModels.University
 		public int? CourseNId { get; set; }
 		public virtual CourseN? CourseN { get; set; }
 
-		[Required, Column(TypeName = "date")]
+		[Required, DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy г.}")]
 		public DateTime? Enrolment { get; set; }
 
 		[Required]
+		public int? FacultyId { get; set; }
 		public virtual Faculty? Faculty { get; set; }
 	}
 

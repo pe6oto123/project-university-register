@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using project_mvc.ApiClient;
 using project_mvc.Models.DataModels.University;
 
@@ -17,7 +16,7 @@ namespace project_mvc.Controllers.DataControllers.University
 
 			_response = await Client.GetClient().GetAsync($"{_apiRoute}?subjectSearch={subjectSearch}");
 			if (!_response.IsSuccessStatusCode)
-				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var subject = await _response.Content.ReadFromJsonAsync<IEnumerable<Subject>>();
 
@@ -41,7 +40,7 @@ namespace project_mvc.Controllers.DataControllers.University
 			{
 				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", subject);
 				if (!_response.IsSuccessStatusCode)
-					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+					return Problem(await _response.Content.ReadAsStringAsync());
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -53,7 +52,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
 			if (!_response.IsSuccessStatusCode)
-				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var subject = await _response.Content.ReadFromJsonAsync<Subject>();
 
@@ -71,7 +70,7 @@ namespace project_mvc.Controllers.DataControllers.University
 			{
 				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", subject);
 				if (!_response.IsSuccessStatusCode)
-					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+					return Problem(await _response.Content.ReadAsStringAsync());
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -85,7 +84,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
 			if (!_response.IsSuccessStatusCode)
-				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+				return Problem(await _response.Content.ReadAsStringAsync());
 
 			return RedirectToAction(nameof(Index));
 		}

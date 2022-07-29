@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using project_mvc.ApiClient;
 using project_mvc.Models.DataModels.University;
 
@@ -11,13 +10,13 @@ namespace project_mvc.Controllers.DataControllers.Info
 		private HttpResponseMessage? _response;
 
 		// GET: CourseN
-		public async Task<IActionResult> Index(string majorSearch)
+		public async Task<IActionResult> Index(string courseSearch)
 		{
-			ViewBag.CourseSearch = majorSearch;
+			ViewBag.CourseSearch = courseSearch;
 
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}?majorSearch={majorSearch}");
+			_response = await Client.GetClient().GetAsync($"{_apiRoute}?courseSearch={courseSearch}");
 			if (!_response.IsSuccessStatusCode)
-				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var courseN = await _response.Content.ReadFromJsonAsync<IEnumerable<CourseN>>();
 
@@ -41,7 +40,7 @@ namespace project_mvc.Controllers.DataControllers.Info
 			{
 				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", courseN);
 				if (!_response.IsSuccessStatusCode)
-					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+					return Problem(await _response.Content.ReadAsStringAsync());
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -76,7 +75,7 @@ namespace project_mvc.Controllers.DataControllers.Info
 			{
 				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", courseN);
 				if (!_response.IsSuccessStatusCode)
-					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+					return Problem(await _response.Content.ReadAsStringAsync());
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -91,7 +90,7 @@ namespace project_mvc.Controllers.DataControllers.Info
 		{
 			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
 			if (!_response.IsSuccessStatusCode)
-				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+				return Problem(await _response.Content.ReadAsStringAsync());
 
 			return RedirectToAction(nameof(Index));
 		}

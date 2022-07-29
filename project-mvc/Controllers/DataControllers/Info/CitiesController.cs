@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using project_mvc.ApiClient;
 using project_mvc.Models.DataModels.Location;
 
@@ -13,7 +12,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		// GET: Cities
 		public async Task<IActionResult> Index(string citySearch, string searchParam)
 		{
-			if (searchParam != null)
+			if (!string.IsNullOrEmpty(searchParam))
 				ViewBag.Search = searchParam;
 			else
 				ViewBag.Search = "CityName";
@@ -22,7 +21,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 
 			_response = await Client.GetClient().GetAsync($"{_apiRoute}?citySearch={citySearch}&searchParam={searchParam}");
 			if (!_response.IsSuccessStatusCode)
-				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var cities = await _response.Content.ReadFromJsonAsync<IEnumerable<City>>();
 
@@ -46,7 +45,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 			{
 				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", city);
 				if (!_response.IsSuccessStatusCode)
-					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+					return Problem(await _response.Content.ReadAsStringAsync());
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -58,7 +57,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		{
 			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
 			if (!_response.IsSuccessStatusCode)
-				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var city = await _response.Content.ReadFromJsonAsync<City>();
 
@@ -76,7 +75,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 			{
 				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", city);
 				if (!_response.IsSuccessStatusCode)
-					return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+					return Problem(await _response.Content.ReadAsStringAsync());
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -90,7 +89,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		{
 			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
 			if (!_response.IsSuccessStatusCode)
-				return Problem(JObject.Parse(await _response.Content.ReadAsStringAsync()).ToString());
+				return Problem(await _response.Content.ReadAsStringAsync());
 
 			return RedirectToAction(nameof(Index));
 		}

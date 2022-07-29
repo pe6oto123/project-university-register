@@ -14,7 +14,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		// GET: Faculties
 		public async Task<IActionResult> Index(string facultySearch, string searchParam)
 		{
-			if (searchParam != null)
+			if (!string.IsNullOrEmpty(searchParam))
 				ViewBag.Search = searchParam;
 			else
 				ViewBag.Search = "FacultyName";
@@ -52,6 +52,9 @@ namespace project_mvc.Controllers.DataControllers.University
 		public async Task<IActionResult> Create()
 		{
 			_response = await Client.GetClient().GetAsync($"api/Cities");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
 			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(), "Id", "CityName");
 
 			return View();
@@ -88,7 +91,8 @@ namespace project_mvc.Controllers.DataControllers.University
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
-			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(), "Id", "CityName");
+			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
+				"Id", "CityName", faculty!.Address!.City!.Id);
 
 			return View(faculty);
 		}
