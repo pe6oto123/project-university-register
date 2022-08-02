@@ -6,7 +6,6 @@ namespace project_mvc.Controllers.DataControllers.Info
 {
 	public class CourseNController : Controller
 	{
-		private const string _apiRoute = "api/CourseN";
 		private HttpResponseMessage? _response;
 
 		// GET: CourseN
@@ -14,7 +13,7 @@ namespace project_mvc.Controllers.DataControllers.Info
 		{
 			ViewBag.CourseSearch = courseSearch;
 
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}?courseSearch={courseSearch}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourseN}?courseSearch={courseSearch}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -38,7 +37,7 @@ namespace project_mvc.Controllers.DataControllers.Info
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", courseN);
+				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeCourseN}/", courseN);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -50,7 +49,7 @@ namespace project_mvc.Controllers.DataControllers.Info
 		// GET: CourseN/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourseN}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return NotFound();
 
@@ -73,7 +72,7 @@ namespace project_mvc.Controllers.DataControllers.Info
 
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", courseN);
+				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeCourseN}/{id}", courseN);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -88,7 +87,7 @@ namespace project_mvc.Controllers.DataControllers.Info
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().DeleteAsync($"{Client._routeCourseN}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 

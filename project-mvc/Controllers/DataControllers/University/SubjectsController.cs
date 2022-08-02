@@ -6,7 +6,6 @@ namespace project_mvc.Controllers.DataControllers.University
 {
 	public class SubjectsController : Controller
 	{
-		private const string _apiRoute = "api/Subjects";
 		private HttpResponseMessage? _response;
 
 		// GET: Subjects
@@ -14,7 +13,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			ViewBag.SubjectSearch = subjectSearch;
 
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}?subjectSearch={subjectSearch}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeSubjects}?subjectSearch={subjectSearch}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -38,7 +37,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", subject);
+				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeSubjects}/", subject);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -50,7 +49,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		// GET: Subjects/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeSubjects}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -68,7 +67,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", subject);
+				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeSubjects}/{id}", subject);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -82,7 +81,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().DeleteAsync($"{Client._routeSubjects}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 

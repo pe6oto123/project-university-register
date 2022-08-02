@@ -15,7 +15,7 @@
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary"
 			style="position:fixed; width:100%; top:0rem; padding-left:0.5rem;padding-right:0.5rem;z-index:999999999">
 			<div style="margin-right:auto">
-				<li id="btn-group-toggle" class="btn-group">
+				<li id="btn-group-toggle" class="btn-group" style="flex-wrap: wrap; justify-content: space-evenly;">
 					@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "btn btn-primary" })
 					<div class="dropdown-container" style="position:relative">
 						<button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
@@ -71,7 +71,7 @@
 					</div>
 				</li>
 			</div>
-			<li id="btn-group-toggle" class="btn-group">
+			<li id="btn-group-toggle" class="btn-group" style="flex-wrap: wrap; justify-content: space-evenly;">
 				<button type="button" class="btn btn-primary" style="margin-right:0.5rem">
 					Log in
 				</button>

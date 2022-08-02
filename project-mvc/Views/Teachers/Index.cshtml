@@ -23,9 +23,9 @@
 			<button type="submit" class="btn btn-primary" style="margin-left:0.5rem">
 				<i class="bi bi-search"></i>
 			</button>
-			<div class="btn-group" style="padding-left:1rem;">
+			<div class="btn-group" style="padding-left:1rem; flex-wrap: wrap;">
 				<div class="form-check" style="margin-left:2rem">
-					@Html.RadioButton("searchParam", "FirstName", true, new
+					@Html.RadioButton("searchParam", "FirstName", @ViewBag.Search == "FirstName", new
 					{
 					@class="form-check-input",
 					type="radio",
@@ -36,7 +36,7 @@
 					</label>
 				</div>
 				<div class="form-check" style="margin-left:2rem">
-					@Html.RadioButton("searchParam", "LastName", true, new
+					@Html.RadioButton("searchParam", "LastName", @ViewBag.Search == "LastName", new
 					{
 					@class="form-check-input",
 					type="radio",
@@ -47,7 +47,7 @@
 					</label>
 				</div>
 				<div class="form-check" style="margin-left:2rem">
-					@Html.RadioButton("searchParam", "Email", true, new
+					@Html.RadioButton("searchParam", "Email", @ViewBag.Search == "Email", new
 					{
 					@class="form-check-input",
 					type="radio",
@@ -58,7 +58,20 @@
 					</label>
 				</div>
 				<div class="form-check" style="margin-left:2rem">
-					@Html.RadioButton("searchParam", "Address", false, new
+					@Html.RadioButton("searchParam", "Faculty.FacultyName", @ViewBag.Search == "Faculty.FacultyName",
+					new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="faculty"
+					})
+					<label class="form-check-label" for="faculty">
+						Faculty
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Address.AddressName", @ViewBag.Search == "Address.AddressName",
+					new
 					{
 					@class="form-check-input",
 					type="radio",
@@ -86,7 +99,10 @@
 						@Html.DisplayNameFor(model => model.Email)
 					</th>
 					<th>
-						@Html.DisplayName("Address")
+						@Html.DisplayNameFor(model => model.Faculty!.FacultyName)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Address)
 					</th>
 					<th style="text-align-last: center;table-layout: fixed;width: 5rem;">
 						<a type="button" class="btn btn-primary btn-sm btn-lg" asp-action="Create">
@@ -109,7 +125,19 @@
 						@Html.DisplayFor(modelItem => item.Email)
 					</td>
 					<td>
+						@Html.DisplayFor(modelItem => item.Faculty!.FacultyName)
+					</td>
+					<td>
+						<div style="display:inline-block;padding-right:0.2rem;font-weight:bold">Address -</div>
 						@Html.DisplayFor(modelItem => item.Address!.AddressName)
+
+						@if(item.Address!.City != null)
+						{
+						<div>
+							<div style="display:inline-block;padding-right:0.2rem;font-weight:bold">City -</div>
+							@Html.DisplayFor(modelItem => item.Address!.City!.CityName)
+						</div>
+						}
 					</td>
 					<td class="align-middle">
 						<div class="btn-group">
@@ -117,8 +145,69 @@
 									class="bi bi-eye-fill"></i></a>
 							<a type="button" class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id"><i
 									class="bi bi-pencil-fill"></i></a>
-							<a type="button" class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i
-									class="bi bi-trash-fill"></i></a>
+							<button id="delete-show-modal" type="button" class="btn btn-danger"
+								onclick="showDeleteModal(@item.Id)">
+								<i class="bi bi-trash-fill"></i></button>
+							<div id="delete-modal-id-@item.Id" class="modal fade" tabindex="-1" role="dialog"
+								aria-labelledby="delete" aria-hidden="true" style="margin-top:5rem">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header" style="justify-content:space-around">
+											<h1 class="modal-title">Delete Faculty</h1>
+										</div>
+										<div class="modal-body">
+											<dl class="row" style="flex-direction: column">
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Id)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Id)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.FirstName)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.FirstName)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.LastName)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.LastName)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Email)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Email)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Faculty!.FacultyName)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Faculty!.FacultyName)
+												</dd>
+												<dt class="col-sm-2">
+													@Html.DisplayNameFor(model => item.Address!.AddressName)
+												</dt>
+												<dd class="col-sm-10">
+													@Html.DisplayFor(model => item.Address!.AddressName)
+												</dd>
+											</dl>
+											<div class="modal-footer">
+												@using (Html.BeginForm("Delete", "Teachers", FormMethod.Post)){
+												<input type="hidden" data-val="true"
+													data-val-required="The Id field is required." id="Id" name="Id"
+													value="@item.Id">
+												<button type="submit" class="btn btn-danger">Delete</button>
+												<button type="button" class="btn btn-secondary"
+													onclick="hideDeleteModal(@item.Id)">Cancel</button>
+												}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</td>
 				</tr>
@@ -126,3 +215,7 @@
 			</tbody>
 		</table>
 	</div>
+
+	@section scripts{
+	<script src="~/js/delete_popup.js" type="text/javascript"></script>
+	}

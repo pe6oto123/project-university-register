@@ -1,164 +1,148 @@
-﻿/*using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using project_mvc.Database.Contexts;
-using project_mvc.Database.Entities.People;
+using project_mvc.ApiClient;
+using project_mvc.Models.DataModels.Location;
+using project_mvc.Models.DataModels.People;
+using project_mvc.Models.DataModels.University;
 
 namespace project_mvc.Controllers.DataControllers.People
 {
-    public class TeachersController : Controller
-    {
-        private readonly DatabaseContext _context;
+	public class TeachersController : Controller
+	{
+		private HttpResponseMessage? _response;
 
-        public TeachersController(DatabaseContext context)
-        {
-            _context = context;
-        }
+		// GET: Teachers
+		public async Task<IActionResult> Index(string teacherSearch, string searchParam)
+		{
+			if (!string.IsNullOrEmpty(searchParam))
+				ViewBag.Search = searchParam;
+			else
+				ViewBag.Search = "FirstName";
 
-        // GET: Teachers
-        public async Task<IActionResult> Index()
-        {
-              return _context.Teacher != null ? 
-                          View(await _context.Teacher.ToListAsync()) :
-                          Problem("Entity set 'DatabaseContext.Teacher'  is null.");
-        }
+			ViewBag.TeacherSearch = teacherSearch;
 
-        // GET: Teachers/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Teacher == null)
-            {
-                return NotFound();
-            }
+			_response = await Client.GetClient().GetAsync($"{Client._routeTeachers}?teacherSearch={teacherSearch}&searchParam={searchParam}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-            var teacher = await _context.Teacher
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (teacher == null)
-            {
-                return NotFound();
-            }
+			var teachers = await _response.Content.ReadFromJsonAsync<IEnumerable<Teacher>>();
 
-            return View(teacher);
-        }
+			return View(teachers);
+		}
 
-        // GET: Teachers/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+		// GET: Teachers/Details/5
+		/*
+		public async Task<IActionResult> Details(int? id)
+		{
+			if (id == null || _context.Teacher == null)
+			{
+				return NotFound();
+			}
 
-        // POST: Teachers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Position")] Teacher teacher)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(teacher);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(teacher);
-        }
+			var teacher = await _context.Teacher
+				.FirstOrDefaultAsync(m => m.Id == id);
+			if (teacher == null)
+			{
+				return NotFound();
+			}
 
-        // GET: Teachers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Teacher == null)
-            {
-                return NotFound();
-            }
+			return View(teacher);
+		}*/
 
-            var teacher = await _context.Teacher.FindAsync(id);
-            if (teacher == null)
-            {
-                return NotFound();
-            }
-            return View(teacher);
-        }
+		// GET: Teachers/Create
+		public async Task<IActionResult> Create()
+		{
+			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-        // POST: Teachers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Position")] Teacher teacher)
-        {
-            if (id != teacher.Id)
-            {
-                return NotFound();
-            }
+			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
+				"Id", "CityName");
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(teacher);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TeacherExists(teacher.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(teacher);
-        }
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-        // GET: Teachers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Teacher == null)
-            {
-                return NotFound();
-            }
+			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
+				"Id", "FacultyName");
 
-            var teacher = await _context.Teacher
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (teacher == null)
-            {
-                return NotFound();
-            }
+			return View();
+		}
 
-            return View(teacher);
-        }
+		// POST: Teachers/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,AddressId,Address,FacultyId")] Teacher teacher)
+		{
+			if (ModelState.IsValid)
+			{
+				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeTeachers}/", teacher);
+				if (!_response.IsSuccessStatusCode)
+					return Problem(await _response.Content.ReadAsStringAsync());
 
-        // POST: Teachers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Teacher == null)
-            {
-                return Problem("Entity set 'DatabaseContext.Teacher'  is null.");
-            }
-            var teacher = await _context.Teacher.FindAsync(id);
-            if (teacher != null)
-            {
-                _context.Teacher.Remove(teacher);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+				return RedirectToAction(nameof(Index));
+			}
+			return View(teacher);
+		}
 
-        private bool TeacherExists(int id)
-        {
-          return (_context.Teacher?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-    }
+		// GET: Teachers/Edit/5
+		public async Task<IActionResult> Edit(int? id)
+		{
+			_response = await Client.GetClient().GetAsync($"{Client._routeTeachers}/{id}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			var teacher = await _response.Content.ReadFromJsonAsync<Teacher>();
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
+				"Id", "CityName", teacher!.Address!.City!.Id);
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
+				"Id", "FacultyName", teacher!.Faculty!.Id);
+
+
+			return View(teacher);
+		}
+
+		// POST: Teachers/Edit/5
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Email,AddressId,Address,FacultyId")] Teacher teacher)
+		{
+			if (ModelState.IsValid)
+			{
+				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeTeachers}/{id}", teacher);
+				if (!_response.IsSuccessStatusCode)
+					return Problem(await _response.Content.ReadAsStringAsync());
+
+				return RedirectToAction(nameof(Index));
+			}
+			return View(teacher);
+		}
+
+
+		// POST: Teachers/Delete/5
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Delete(int id)
+		{
+			_response = await Client.GetClient().DeleteAsync($"{Client._routeTeachers}/{id}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			return RedirectToAction(nameof(Index));
+		}
+	}
 }
-*/

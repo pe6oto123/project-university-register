@@ -7,7 +7,6 @@ namespace project_mvc.Controllers.DataControllers.University
 {
 	public class CoursesController : Controller
 	{
-		private const string _apiRoute = "api/Courses";
 		private HttpResponseMessage? _response;
 
 		// GET: Courses
@@ -20,7 +19,7 @@ namespace project_mvc.Controllers.DataControllers.University
 
 			ViewBag.CourseSearch = courseSearch;
 
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}?courseSearch={courseSearch}&searchParam={searchParam}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}?courseSearch={courseSearch}&searchParam={searchParam}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -50,17 +49,19 @@ namespace project_mvc.Controllers.DataControllers.University
 		// GET: Courses/Create
 		public async Task<IActionResult> Create()
 		{
-			_response = await Client.GetClient().GetAsync($"api/Faculties");
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
-			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(), "Id", "FacultyName");
+			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
+				"Id", "FacultyName");
 
-			_response = await Client.GetClient().GetAsync($"api/CourseN");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourseN}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
-			ViewBag.CourseNs = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<CourseN>>(), "Id", "CourseName");
+			ViewBag.CourseNs = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<CourseN>>(),
+				"Id", "CourseName");
 
 			return View();
 		}
@@ -74,7 +75,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", course);
+				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeCourses}/", course);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -86,20 +87,20 @@ namespace project_mvc.Controllers.DataControllers.University
 		// GET: Courses/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var course = await _response.Content.ReadFromJsonAsync<Course>();
 
-			_response = await Client.GetClient().GetAsync($"api/Faculties");
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
 				"Id", "FacultyName", course!.Faculty!.Id);
 
-			_response = await Client.GetClient().GetAsync($"api/CourseN");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourseN}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -118,7 +119,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", course);
+				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeCourses}/{id}", course);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -132,7 +133,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().DeleteAsync($"{Client._routeCourses}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 

@@ -69,9 +69,9 @@ namespace project_api.Controllers.University
 			}
 
 			//_context.Attach(faculty);
-			//_context.Entry(faculty.Address!).Reference(s => s.City).IsModified = true;
 			//_context.Entry(faculty.Address!).State = EntityState.Modified;
 			//_context.Entry(faculty).State = EntityState.Modified;
+			//_context.Entry(faculty).Reference(s => s.Address).IsModified = false;
 			_context.Update(faculty);
 
 			try
@@ -116,7 +116,10 @@ namespace project_api.Controllers.University
 			{
 				return NotFound();
 			}
-			var faculty = await _context.Faculty.Include(s => s.Address).FirstAsync(s => s.Id == id);
+			var faculty = await _context.Faculty
+				.Include(s => s.Address)
+				.FirstAsync(s => s.Id == id);
+
 			if (faculty == null)
 			{
 				return NotFound();

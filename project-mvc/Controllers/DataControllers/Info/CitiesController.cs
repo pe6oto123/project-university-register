@@ -6,7 +6,6 @@ namespace project_mvc.Controllers.DataControllers.Location
 {
 	public class CitiesController : Controller
 	{
-		private const string _apiRoute = "api/Cities";
 		private HttpResponseMessage? _response;
 
 		// GET: Cities
@@ -19,7 +18,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 
 			ViewBag.CitySearch = citySearch;
 
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}?citySearch={citySearch}&searchParam={searchParam}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCities}?citySearch={citySearch}&searchParam={searchParam}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -43,7 +42,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", city);
+				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeCities}/", city);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -55,7 +54,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		// GET: Cities/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCities}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -73,7 +72,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", city);
+				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeCities}/{id}", city);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -87,7 +86,7 @@ namespace project_mvc.Controllers.DataControllers.Location
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().DeleteAsync($"{Client._routeCities}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 

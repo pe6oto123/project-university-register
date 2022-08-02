@@ -8,7 +8,6 @@ namespace project_mvc.Controllers.DataControllers.University
 {
 	public class FacultiesController : Controller
 	{
-		private const string _apiRoute = "api/Faculties";
 		private HttpResponseMessage? _response;
 
 		// GET: Faculties
@@ -21,7 +20,7 @@ namespace project_mvc.Controllers.DataControllers.University
 
 			ViewBag.FacultySearch = facultySearch;
 
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}?facultySearch={facultySearch}&searchParam={searchParam}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}?facultySearch={facultySearch}&searchParam={searchParam}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -51,11 +50,12 @@ namespace project_mvc.Controllers.DataControllers.University
 		// GET: Faculties/Create
 		public async Task<IActionResult> Create()
 		{
-			_response = await Client.GetClient().GetAsync($"api/Cities");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
-			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(), "Id", "CityName");
+			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
+				"Id", "CityName");
 
 			return View();
 		}
@@ -65,12 +65,11 @@ namespace project_mvc.Controllers.DataControllers.University
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("Id,FacultyName,AddressId,Address,Address.CityId")] Faculty faculty)
+		public async Task<IActionResult> Create([Bind("Id,FacultyName,AddressId,Address")] Faculty faculty)
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{_apiRoute}/", faculty);
-				string test = await _response.Content.ReadAsStringAsync();
+				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeFaculties}/", faculty);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -82,12 +81,13 @@ namespace project_mvc.Controllers.DataControllers.University
 		// GET: Faculties/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
+
 			var faculty = await _response.Content.ReadFromJsonAsync<Faculty>();
 
-			_response = await Client.GetClient().GetAsync($"api/Cities/");
+			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -102,11 +102,11 @@ namespace project_mvc.Controllers.DataControllers.University
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,FacultyName,AddressId,Address,Address.CityId")] Faculty faculty)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,FacultyName,AddressId,Address")] Faculty faculty)
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{_apiRoute}/{id}", faculty);
+				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeFaculties}/{id}", faculty);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -120,7 +120,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"{_apiRoute}/{id}");
+			_response = await Client.GetClient().DeleteAsync($"{Client._routeFaculties}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
