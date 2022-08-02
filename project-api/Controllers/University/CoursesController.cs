@@ -106,6 +106,13 @@ namespace project_api.Controllers.University
 			_context.Course.Add(course);
 			await _context.SaveChangesAsync();
 
+			_context.FacultyNum.Add(new FacultyNum()
+			{
+				CourseId = course.Id,
+				NextFreeId = 1
+			});
+			await _context.SaveChangesAsync();
+
 			return CreatedAtAction("GetCourse", new { id = course.Id }, course);
 		}
 

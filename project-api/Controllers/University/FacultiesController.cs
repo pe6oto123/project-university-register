@@ -63,7 +63,7 @@ namespace project_api.Controllers.University
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutFaculty(int id, Faculty faculty)
 		{
-			if (id != faculty.Id)
+			if (id != faculty.Id || faculty.AddressId != faculty.Address!.Id)
 			{
 				return BadRequest();
 			}

@@ -18,8 +18,7 @@ namespace project_mvc.Models.DataModels.People
 		[StringLength(50)]
 		public string? LastName { get; set; }
 
-		[Required]
-		[StringLength(12)]
+		[Required, StringLength(12)]
 		public string? FacultyNumber { get; set; }
 
 		[Required]

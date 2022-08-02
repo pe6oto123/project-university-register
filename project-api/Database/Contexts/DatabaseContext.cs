@@ -18,6 +18,7 @@ namespace project_api.Database.Contexts
 		public DbSet<Account> Account => Set<Account>();
 		public DbSet<UserRole> UserRole => Set<UserRole>();
 		public DbSet<Faculty> Faculty => Set<Faculty>();
+		public DbSet<FacultyNum> FacultyNum => Set<FacultyNum>();
 		public DbSet<Course> Course => Set<Course>();
 		public DbSet<CourseN> CourseN => Set<CourseN>();
 		public DbSet<Subject> Subject => Set<Subject>();

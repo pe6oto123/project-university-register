@@ -4,38 +4,57 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1 style="text-align:center">Create Student</h1>
 
-<h4>Student</h4>
 <hr />
-<div class="row">
+<div class="row" style="place-content:center">
     <div class="col-md-4">
         <form asp-action="Create">
+			<input type="hidden" asp-for="FacultyNumber" value="0" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
+                <label asp-for="FirstName" class="control-label" style="font-weight:bold"></label>
+                <input asp-for="FirstName" class="form-control" autocomplete="off" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
+                <label asp-for="LastName" class="control-label" style="font-weight:bold"></label>
+                <input asp-for="LastName" class="form-control" autocomplete="off" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FacultyNumber" class="control-label"></label>
-                <input asp-for="FacultyNumber" class="form-control" />
-                <span asp-validation-for="FacultyNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+				@Html.LabelFor(model => model.FacultyId, "Faculty", htmlAttributes: new { @class = "control-label",
+				style="font-weight:bold" })
+				@Html.DropDownListFor(model => model.FacultyId, ViewBag.Faculties as IEnumerable<SelectListItem>, new {
+					@class = "form-control"})
+					@Html.ValidationMessageFor(model => model.FacultyId, "", new { @class = "text-danger" })
+			</div>
+             <div class="form-group">
+				@Html.LabelFor(model => model.CourseId, "Course", htmlAttributes: new { @class = "control-label",
+				style="font-weight:bold" })
+				@Html.DropDownListFor(model => model.CourseId, ViewBag.Courses as IEnumerable<SelectListItem>, new {
+					@class = "form-control"})
+					@Html.ValidationMessageFor(model => model.CourseId, "", new { @class = "text-danger" })
+			</div>
+			<div class="form-group">
+				<label asp-for="Address!.AddressName" class="control-label" style="font-weight:bold"></label>
+				<input asp-for="Address!.AddressName" class="form-control" autocomplete="off" />
+				<span asp-validation-for="Address!.AddressName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<input type="hidden" asp-for="AddressId" value="0" />
+				@Html.LabelFor(model => model.Address!.CityId, "City",htmlAttributes: new { @class = "control-label",
+				style="font-weight:bold" })
+				@Html.DropDownListFor(model => model.Address!.CityId, ViewBag.Cities as IEnumerable<SelectListItem>, new
+					{ @class = "form-control"})
+					@Html.ValidationMessageFor(model => model.Address!.CityId, "", new { @class = "text-danger" })
+			</div>
+            <div class="form-group" style="margin-top:0.5rem; float:right">
                 <input type="submit" value="Create" class="btn btn-primary" />
+				<a class="btn btn-secondary" asp-action="Index">Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

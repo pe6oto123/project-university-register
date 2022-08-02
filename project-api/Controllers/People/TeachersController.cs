@@ -66,7 +66,7 @@ namespace project_api.Controllers.People
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutTeacher(int id, Teacher teacher)
 		{
-			if (id != teacher.Id)
+			if (id != teacher.Id || teacher.AddressId != teacher.Address!.Id)
 			{
 				return BadRequest();
 			}

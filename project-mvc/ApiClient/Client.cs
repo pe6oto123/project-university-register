@@ -10,6 +10,7 @@ namespace project_mvc.ApiClient
 		public static readonly string _routeFaculties = "api/Faculties";
 		public static readonly string _routeSubjects = "api/Subjects";
 		public static readonly string _routeTeachers = "api/Teachers";
+		public static readonly string _routeStudents = "api/Students";
 
 		public static HttpClient GetClient()
 		{

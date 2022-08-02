@@ -1,164 +1,160 @@
-﻿/*using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using project_mvc.Database.Contexts;
-using project_mvc.Database.Entities.People;
+using project_mvc.ApiClient;
+using project_mvc.Models.DataModels.Location;
+using project_mvc.Models.DataModels.People;
+using project_mvc.Models.DataModels.University;
 
 namespace project_mvc.Controllers.DataControllers.People
 {
-    public class StudentsController : Controller
-    {
-        private readonly DatabaseContext _context;
+	public class StudentsController : Controller
+	{
+		private HttpResponseMessage? _response;
 
-        public StudentsController(DatabaseContext context)
-        {
-            _context = context;
-        }
+		// GET: Students
+		public async Task<IActionResult> Index(string studentSearch, string searchParam)
+		{
+			if (!string.IsNullOrEmpty(studentSearch))
+				ViewBag.Search = searchParam;
+			else
+				ViewBag.Search = "FirstName";
 
-        // GET: Students
-        public async Task<IActionResult> Index()
-        {
-              return _context.Student != null ? 
-                          View(await _context.Student.ToListAsync()) :
-                          Problem("Entity set 'DatabaseContext.Student'  is null.");
-        }
+			ViewBag.TeacherSearch = studentSearch;
 
-        // GET: Students/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Student == null)
-            {
-                return NotFound();
-            }
+			_response = await Client.GetClient().GetAsync($"{Client._routeStudents}?studentSearch={studentSearch}&searchParam={searchParam}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-            var student = await _context.Student
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (student == null)
-            {
-                return NotFound();
-            }
+			var students = await _response.Content.ReadFromJsonAsync<IEnumerable<Student>>();
 
-            return View(student);
-        }
+			return View(students);
+		}
 
-        // GET: Students/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+		/*// GET: Students/Details/5
+		public async Task<IActionResult> Details(int? id)
+		{
+			if (id == null || _context.Student == null)
+			{
+				return NotFound();
+			}
 
-        // POST: Students/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,FacultyNumber")] Student student)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(student);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(student);
-        }
+			var student = await _context.Student
+				.FirstOrDefaultAsync(m => m.Id == id);
+			if (student == null)
+			{
+				return NotFound();
+			}
 
-        // GET: Students/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Student == null)
-            {
-                return NotFound();
-            }
+			return View(student);
+		}*/
 
-            var student = await _context.Student.FindAsync(id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-            return View(student);
-        }
+		// GET: Students/Create
+		public async Task<IActionResult> Create()
+		{
+			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-        // POST: Students/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,FacultyNumber")] Student student)
-        {
-            if (id != student.Id)
-            {
-                return NotFound();
-            }
+			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
+				"Id", "CityName");
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(student);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(student.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(student);
-        }
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-        // GET: Students/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Student == null)
-            {
-                return NotFound();
-            }
+			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
+				"Id", "FacultyName");
 
-            var student = await _context.Student
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (student == null)
-            {
-                return NotFound();
-            }
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-            return View(student);
-        }
+			ViewBag.Courses = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Course>>(),
+				"Id", "CourseN.CourseName");
 
-        // POST: Students/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Student == null)
-            {
-                return Problem("Entity set 'DatabaseContext.Student'  is null.");
-            }
-            var student = await _context.Student.FindAsync(id);
-            if (student != null)
-            {
-                _context.Student.Remove(student);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+			return View();
+		}
 
-        private bool StudentExists(int id)
-        {
-          return (_context.Student?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-    }
+		// POST: Students/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,FacultyNumber,AddressId,Address,FacultyId,CourseId")] Student student)
+		{
+			if (ModelState.IsValid)
+			{
+				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeStudents}/", student);
+				if (!_response.IsSuccessStatusCode)
+					return Problem(await _response.Content.ReadAsStringAsync());
+
+				return RedirectToAction(nameof(Index));
+			}
+			return View(student);
+		}
+
+		// GET: Students/Edit/5
+		public async Task<IActionResult> Edit(int? id)
+		{
+			_response = await Client.GetClient().GetAsync($"{Client._routeStudents}/{id}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			var student = await _response.Content.ReadFromJsonAsync<Student>();
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
+				"Id", "CityName", student!.Address!.Id);
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
+				"Id", "FacultyName", student!.Faculty!.Id);
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Courses = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Course>>(),
+				"Id", "CourseN.CourseName", student!.Course!.Id);
+
+
+			return View(student);
+		}
+
+		// POST: Students/Edit/5
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,FacultyNumber,AddressId,Address,FacultyId,CourseId")] Student student)
+		{
+			if (ModelState.IsValid)
+			{
+				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeStudents}/{id}", student);
+				if (!_response.IsSuccessStatusCode)
+					return Problem(await _response.Content.ReadAsStringAsync());
+
+				return RedirectToAction(nameof(Index));
+			}
+			return View(student);
+		}
+
+		// POST: Students/Delete/5
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(int id)
+		{
+			_response = await Client.GetClient().DeleteAsync($"{Client._routeStudents}/{id}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			return RedirectToAction(nameof(Index));
+		}
+	}
 }
-*/
