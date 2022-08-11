@@ -14,7 +14,6 @@ namespace project_mvc.Models.DataModels.University
 
 		[Required]
 		public int? AddressId { get; set; }
-
 		public virtual Address? Address { get; set; }
 	}
 }

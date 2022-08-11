@@ -72,7 +72,6 @@ namespace project_api.Controllers.University
 				return BadRequest();
 			}
 
-			//_context.Entry(faculty.Address!).Reference(s => s.City).IsModified = true;
 			_context.Update(course);
 
 			try
@@ -103,7 +102,9 @@ namespace project_api.Controllers.University
 			{
 				return Problem("Entity set 'DatabaseContext.Course'  is null.");
 			}
+
 			_context.Course.Add(course);
+
 			await _context.SaveChangesAsync();
 
 			_context.FacultyNum.Add(new FacultyNum()
@@ -111,6 +112,17 @@ namespace project_api.Controllers.University
 				CourseId = course.Id,
 				NextFreeId = 1
 			});
+
+			for (short i = 0; i < course.CourseLength; i++)
+			{
+				_context.Schedule.Add(new Schedule()
+				{
+					Id = 0,
+					CourseId = course.Id,
+					Year = i + 1
+				});
+			}
+
 			await _context.SaveChangesAsync();
 
 			return CreatedAtAction("GetCourse", new { id = course.Id }, course);
@@ -131,6 +143,7 @@ namespace project_api.Controllers.University
 			}
 
 			_context.Course.Remove(course);
+			_context.Schedule.RemoveRange(await _context.Schedule.Where(s => s.CourseId == course.Id).ToListAsync());
 			await _context.SaveChangesAsync();
 
 			return NoContent();

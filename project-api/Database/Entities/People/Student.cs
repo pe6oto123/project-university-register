@@ -40,10 +40,10 @@ namespace project_api.Database.Entities.People
 	public class StudentsSubjects
 	{
 		[Key, Column(Order = 0)]
-		public int StudentsId { get; set; }
+		public int StudentId { get; set; }
 
 		[Key, Column(Order = 1)]
-		public int SubjectsId { get; set; }
+		public int SubjectId { get; set; }
 
 		public virtual Student? Student { get; set; }
 

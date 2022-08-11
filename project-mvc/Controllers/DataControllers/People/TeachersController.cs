@@ -31,23 +31,48 @@ namespace project_mvc.Controllers.DataControllers.People
 		}
 
 		// GET: Teachers/Details/5
-		/*
-		public async Task<IActionResult> Details(int? id)
-		{
-			if (id == null || _context.Teacher == null)
-			{
-				return NotFound();
-			}
 
-			var teacher = await _context.Teacher
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (teacher == null)
-			{
-				return NotFound();
-			}
+		public async Task<IActionResult> Subjects(int id, string subjectSearch)
+		{
+			ViewBag.SubjectSearch = subjectSearch;
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeTeachers}/{id}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+			var teacher = await _response.Content.ReadFromJsonAsync<Teacher>();
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeSubjects}/Faculty/facultyId={teacher!.FacultyId}?subjectSearch={subjectSearch}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Subjects = await _response.Content.ReadFromJsonAsync<IEnumerable<Subject>>();
 
 			return View(teacher);
-		}*/
+		}
+
+		// POST: Teachers/Subjects
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Subjects([FromBody] Teacher teacher, string? subjectSearch)
+		{
+			if (ModelState.IsValid)
+			{
+				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeTeachers}/{teacher.Id}?editSubjects={true}&subjectSearch={subjectSearch}", teacher);
+				if (!_response.IsSuccessStatusCode)
+					return Problem(await _response.Content.ReadAsStringAsync());
+
+				return Json(new { redirectToUrl = Url.Action("Index", "Teachers") });
+			}
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}/Subjects/{teacher!.FacultyId}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Subjects = await _response.Content.ReadFromJsonAsync<IEnumerable<Subject>>();
+
+			return View(teacher);
+		}
+
 
 		// GET: Teachers/Create
 		public async Task<IActionResult> Create()
@@ -101,14 +126,14 @@ namespace project_mvc.Controllers.DataControllers.People
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
-				"Id", "CityName", teacher!.Address!.City!.Id);
+				"Id", "CityName", teacher!.Address!.CityId);
 
 			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
-				"Id", "FacultyName", teacher!.Faculty!.Id);
+				"Id", "FacultyName", teacher!.FacultyId);
 
 
 			return View(teacher);

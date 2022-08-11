@@ -28,23 +28,60 @@ namespace project_mvc.Controllers.DataControllers.University
 			return View(courses);
 		}
 
-		/*// GET: Courses/Details/5
-		public async Task<IActionResult> Details(int? id)
+		// GET: Courses/Schedule/5
+		public async Task<IActionResult> Schedule(int courseId, int year, string subjectSearch)
 		{
-			if (id == null || _context.Course == null)
+			ViewBag.SubjectSearch = subjectSearch;
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeSchedules}/courseId={courseId}&year={year}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			var schedule = await _response.Content.ReadFromJsonAsync<Schedule>();
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}/{courseId}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Course = await _response.Content.ReadFromJsonAsync<Course>();
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeSubjects}/Schedule/courseId={courseId}&year={year}?subjectSearch={subjectSearch}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Subjects = await _response.Content.ReadFromJsonAsync<IEnumerable<Subject>>();
+
+			return View(schedule);
+		}
+
+		// POST: Schedule
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Schedule([FromBody] Schedule schedule, string? subjectSearch)
+		{
+			if (ModelState.IsValid)
 			{
-				return NotFound();
+				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeSchedules}/{schedule.Id}?subjectSearch={subjectSearch}", schedule);
+				if (!_response.IsSuccessStatusCode)
+					return Problem(await _response.Content.ReadAsStringAsync());
+
+				return Json(new { redirectToUrl = Url.Action("Index", "Courses") });
 			}
 
-			var course = await _context.Course
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (course == null)
-			{
-				return NotFound();
-			}
+			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}/{schedule.CourseId}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
 
-			return View(course);
-		}*/
+			ViewBag.Course = await _response.Content.ReadFromJsonAsync<Course>();
+
+			_response = await Client.GetClient().GetAsync($"{Client._routeSubjects}/Schedule/courseId={schedule.CourseId}&year={schedule.Year}?subjectSearch={subjectSearch}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Subjects = await _response.Content.ReadFromJsonAsync<IEnumerable<Subject>>();
+
+			return View(schedule);
+		}
 
 		// GET: Courses/Create
 		public async Task<IActionResult> Create()
@@ -71,7 +108,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("Id,CourseNId,FacultyId,Enrolment")] Course course)
+		public async Task<IActionResult> Create([Bind("Id,CourseNId,CourseLength,FacultyId,Enrolment")] Course course)
 		{
 			if (ModelState.IsValid)
 			{
@@ -98,14 +135,14 @@ namespace project_mvc.Controllers.DataControllers.University
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
-				"Id", "FacultyName", course!.Faculty!.Id);
+				"Id", "FacultyName", course!.FacultyId);
 
 			_response = await Client.GetClient().GetAsync($"{Client._routeCourseN}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.CourseNs = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<CourseN>>(),
-				"Id", "CourseName", course.CourseN!.Id);
+				"Id", "CourseName", course.CourseNId);
 
 			return View(course);
 		}
@@ -115,7 +152,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,CourseNId,FacultyId,Enrolment")] Course course)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,CourseNId,CourseLength,FacultyId,Enrolment")] Course course)
 		{
 			if (ModelState.IsValid)
 			{

@@ -176,22 +176,22 @@ namespace project_api.Database.Migrations
 
             modelBuilder.Entity("project_api.Database.Entities.People.StudentsSubjects", b =>
                 {
-                    b.Property<int>("StudentsId")
+                    b.Property<int>("StudentId")
                         .HasColumnType("int")
                         .HasColumnOrder(0);
 
-                    b.Property<int>("SubjectsId")
+                    b.Property<int>("SubjectId")
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
                     b.Property<int?>("GradeId")
                         .HasColumnType("int");
 
-                    b.HasKey("StudentsId", "SubjectsId");
+                    b.HasKey("StudentId", "SubjectId");
 
                     b.HasIndex("GradeId");
 
-                    b.HasIndex("SubjectsId");
+                    b.HasIndex("SubjectId");
 
                     b.ToTable("StudentsSubjects");
                 });
@@ -234,10 +234,31 @@ namespace project_api.Database.Migrations
                     b.ToTable("Teacher");
                 });
 
+            modelBuilder.Entity("project_api.Database.Entities.People.TeachersSubjects", b =>
+                {
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("TeacherId", "SubjectId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("TeachersSubjects");
+                });
+
             modelBuilder.Entity("project_api.Database.Entities.University.Course", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CourseLength")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("CourseNId")
@@ -333,10 +354,31 @@ namespace project_api.Database.Migrations
                     b.ToTable("Schedule");
                 });
 
+            modelBuilder.Entity("project_api.Database.Entities.University.SchedulesSubjects", b =>
+                {
+                    b.Property<int>("ScheduleId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("ScheduleId", "SubjectId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("SchedulesSubjects");
+                });
+
             modelBuilder.Entity("project_api.Database.Entities.University.Subject", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FacultyId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("SubjectName")
@@ -346,37 +388,9 @@ namespace project_api.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FacultyId");
+
                     b.ToTable("Subject");
-                });
-
-            modelBuilder.Entity("ScheduleSubject", b =>
-                {
-                    b.Property<int>("ScheduleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SubjectsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ScheduleId", "SubjectsId");
-
-                    b.HasIndex("SubjectsId");
-
-                    b.ToTable("ScheduleSubject");
-                });
-
-            modelBuilder.Entity("SubjectTeacher", b =>
-                {
-                    b.Property<int>("SubjectsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeachersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SubjectsId", "TeachersId");
-
-                    b.HasIndex("TeachersId");
-
-                    b.ToTable("SubjectTeacher");
                 });
 
             modelBuilder.Entity("project_api.Database.Entities.Access.Account", b =>
@@ -446,13 +460,13 @@ namespace project_api.Database.Migrations
 
                     b.HasOne("project_api.Database.Entities.People.Student", "Student")
                         .WithMany("StudentsSubjects")
-                        .HasForeignKey("StudentsId")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("project_api.Database.Entities.University.Subject", "Subject")
                         .WithMany("StudentsSubjects")
-                        .HasForeignKey("SubjectsId")
+                        .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -480,6 +494,25 @@ namespace project_api.Database.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("project_api.Database.Entities.People.TeachersSubjects", b =>
+                {
+                    b.HasOne("project_api.Database.Entities.University.Subject", "Subject")
+                        .WithMany("TeachersSubjects")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("project_api.Database.Entities.People.Teacher", "Teacher")
+                        .WithMany("TeachersSubjects")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("project_api.Database.Entities.University.Course", b =>
@@ -534,34 +567,34 @@ namespace project_api.Database.Migrations
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("ScheduleSubject", b =>
+            modelBuilder.Entity("project_api.Database.Entities.University.SchedulesSubjects", b =>
                 {
-                    b.HasOne("project_api.Database.Entities.University.Schedule", null)
-                        .WithMany()
+                    b.HasOne("project_api.Database.Entities.University.Schedule", "Schedule")
+                        .WithMany("SchedulesSubjects")
                         .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("project_api.Database.Entities.University.Subject", null)
-                        .WithMany()
-                        .HasForeignKey("SubjectsId")
+                    b.HasOne("project_api.Database.Entities.University.Subject", "Subject")
+                        .WithMany("SchedulesSubjects")
+                        .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Schedule");
+
+                    b.Navigation("Subject");
                 });
 
-            modelBuilder.Entity("SubjectTeacher", b =>
+            modelBuilder.Entity("project_api.Database.Entities.University.Subject", b =>
                 {
-                    b.HasOne("project_api.Database.Entities.University.Subject", null)
+                    b.HasOne("project_api.Database.Entities.University.Faculty", "Faculty")
                         .WithMany()
-                        .HasForeignKey("SubjectsId")
+                        .HasForeignKey("FacultyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("project_api.Database.Entities.People.Teacher", null)
-                        .WithMany()
-                        .HasForeignKey("TeachersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Faculty");
                 });
 
             modelBuilder.Entity("project_api.Database.Entities.People.Student", b =>
@@ -569,9 +602,23 @@ namespace project_api.Database.Migrations
                     b.Navigation("StudentsSubjects");
                 });
 
+            modelBuilder.Entity("project_api.Database.Entities.People.Teacher", b =>
+                {
+                    b.Navigation("TeachersSubjects");
+                });
+
+            modelBuilder.Entity("project_api.Database.Entities.University.Schedule", b =>
+                {
+                    b.Navigation("SchedulesSubjects");
+                });
+
             modelBuilder.Entity("project_api.Database.Entities.University.Subject", b =>
                 {
+                    b.Navigation("SchedulesSubjects");
+
                     b.Navigation("StudentsSubjects");
+
+                    b.Navigation("TeachersSubjects");
                 });
 #pragma warning restore 612, 618
         }

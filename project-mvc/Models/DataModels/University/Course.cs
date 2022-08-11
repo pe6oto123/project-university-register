@@ -11,8 +11,11 @@ namespace project_mvc.Models.DataModels.University
 		public int? CourseNId { get; set; }
 		public virtual CourseN? CourseN { get; set; }
 
-		[Required, DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy г.}")]
+		[Required, DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
 		public DateTime? Enrolment { get; set; }
+
+		[Required, Range(1, 4)]
+		public int? CourseLength { get; set; }
 
 		[Required]
 		public int? FacultyId { get; set; }
@@ -51,6 +54,6 @@ namespace project_mvc.Models.DataModels.University
 		[Required]
 		public int? Year { get; set; }
 
-		public virtual ICollection<Subject>? Subjects { get; set; }
+		public virtual ICollection<SchedulesSubjects>? SchedulesSubjects { get; set; }
 	}
 }

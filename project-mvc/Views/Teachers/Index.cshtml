@@ -141,8 +141,9 @@
 					</td>
 					<td class="align-middle">
 						<div class="btn-group">
-							<a type="button" class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id"><i
-									class="bi bi-eye-fill"></i></a>
+							<a type="button" class="btn btn-primary" asp-action="Subjects" asp-route-id="@item.Id"
+								data-toggle="tooltip" data-placement="bottom" title="Subjects"><i
+									class="bi bi-journals"></i></a>
 							<a type="button" class="btn btn-success" asp-action="Edit" asp-route-id="@item.Id"><i
 									class="bi bi-pencil-fill"></i></a>
 							<button id="delete-show-modal" type="button" class="btn btn-danger"
@@ -218,4 +219,9 @@
 
 	@section scripts{
 	<script src="~/js/delete_popup.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(() => {
+			$('[data-toggle="tooltip"]').tooltip()
+		})	
+	</script>
 	}

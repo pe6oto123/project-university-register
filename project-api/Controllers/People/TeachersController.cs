@@ -50,6 +50,7 @@ namespace project_api.Controllers.People
 				.Include(s => s.Address)
 				.Include(s => s.Address!.City)
 				.Include(s => s.Faculty)
+				.Include(s => s.TeachersSubjects)
 				.FirstAsync(s => s.Id == id);
 
 
@@ -64,14 +65,26 @@ namespace project_api.Controllers.People
 		// PUT: api/Teachers/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutTeacher(int id, Teacher teacher)
+		public async Task<IActionResult> PutTeacher(int id, Teacher teacher, bool editSubjects = false, string? subjectSearch = null)
 		{
 			if (id != teacher.Id || teacher.AddressId != teacher.Address!.Id)
 			{
 				return BadRequest();
 			}
 
-			//_context.Entry(teacher).State = EntityState.Modified;
+			if (editSubjects!)
+			{
+				_context.RemoveRange(await _context.TeachersSubjects
+					.Include(s => s.Subject)
+					.Where(s => s.TeacherId == teacher.Id)
+					.Where(s => subjectSearch == null ||
+						subjectSearch == "undefined" ||
+						s.Subject!.SubjectName!.Contains(subjectSearch!))
+					.ToListAsync());
+
+				_context.AddRange(teacher.TeachersSubjects!);
+			}
+
 			_context.Update(teacher);
 
 			try

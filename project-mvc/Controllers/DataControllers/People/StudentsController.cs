@@ -107,21 +107,21 @@ namespace project_mvc.Controllers.DataControllers.People
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
-				"Id", "CityName", student!.Address!.Id);
+				"Id", "CityName", student!.AddressId);
 
 			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
-				"Id", "FacultyName", student!.Faculty!.Id);
+				"Id", "FacultyName", student!.FacultyId);
 
 			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Courses = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Course>>(),
-				"Id", "CourseN.CourseName", student!.Course!.Id);
+				"Id", "CourseN.CourseName", student!.CourseId);
 
 
 			return View(student);

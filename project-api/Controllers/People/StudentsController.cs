@@ -56,6 +56,8 @@ namespace project_api.Controllers.People
 				.Include(s => s.Course!.CourseN)
 				.FirstAsync(s => s.Id == id);
 
+
+
 			if (student == null)
 			{
 				return NotFound();
@@ -106,17 +108,38 @@ namespace project_api.Controllers.People
 				return Problem("Entity set 'DatabaseContext.Student'  is null.");
 			}
 
-			var faculty = await _context.Faculty.FirstAsync(s => s.Id == student.FacultyId);
-			var course = await _context.Course.FirstAsync(s => s.Id == student.CourseId);
-			var nextFree = await _context.FacultyNum.FirstAsync(s => s.CourseId == course.Id);
+			var faculty = await _context.Faculty
+				.FirstAsync(s => s.Id == student.FacultyId);
+
+			var course = await _context.Course
+				.FirstAsync(s => s.Id == student.CourseId);
+
+			var facultyNum = await _context.FacultyNum
+				.FirstAsync(s => s.CourseId == course.Id);
+
+			var schedules = await _context.Schedule
+				.Include(s => s.SchedulesSubjects)
+				.Where(s => s.CourseId == student.CourseId).ToListAsync();
 
 			student.FacultyNumber = $"{course.Enrolment!.Value:yy}" +
 				$"{new string('0', 3 - faculty.Id.ToString().Length)}{faculty.Id}" +
 				$"{new string('0', 3 - course.Id.ToString().Length)}{course.Id}" +
-				$"{new string('0', 4 - nextFree.NextFreeId.ToString().Length)}{nextFree.NextFreeId}";
+				$"{new string('0', 4 - facultyNum.NextFreeId.ToString().Length)}{facultyNum.NextFreeId}";
 
-			++nextFree.NextFreeId;
-			_context.Entry(nextFree).State = EntityState.Modified;
+			++facultyNum.NextFreeId;
+			_context.Entry(facultyNum).State = EntityState.Modified;
+
+			var subjects = new List<StudentsSubjects>();
+			foreach (var schedule in schedules)
+				foreach (var subject in schedule.SchedulesSubjects!)
+				{
+					subjects.Add(new StudentsSubjects()
+					{
+						StudentId = student.Id,
+						SubjectId = subject.SubjectId
+					});
+				}
+			student.StudentsSubjects = subjects;
 
 			_context.Student.Add(student);
 			await _context.SaveChangesAsync();

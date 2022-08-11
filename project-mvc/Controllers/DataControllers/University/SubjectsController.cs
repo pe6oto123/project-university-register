@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using project_mvc.ApiClient;
 using project_mvc.Models.DataModels.University;
 
@@ -9,11 +10,16 @@ namespace project_mvc.Controllers.DataControllers.University
 		private HttpResponseMessage? _response;
 
 		// GET: Subjects
-		public async Task<IActionResult> Index(string subjectSearch)
+		public async Task<IActionResult> Index(string subjectSearch, string searchParam)
 		{
+			if (!string.IsNullOrEmpty(searchParam))
+				ViewBag.Search = searchParam;
+			else
+				ViewBag.Search = "SubjectName";
+
 			ViewBag.SubjectSearch = subjectSearch;
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeSubjects}?subjectSearch={subjectSearch}");
+			_response = await Client.GetClient().GetAsync($"{Client._routeSubjects}?subjectSearch={subjectSearch}&searchParam={searchParam}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -23,8 +29,15 @@ namespace project_mvc.Controllers.DataControllers.University
 		}
 
 		// GET: Subjects/Create
-		public IActionResult Create()
+		public async Task<IActionResult> Create()
 		{
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
+				"Id", "FacultyName");
+
 			return View();
 		}
 
@@ -33,7 +46,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("Id,SubjectName")] Subject subject)
+		public async Task<IActionResult> Create([Bind("Id,SubjectName,FacultyId")] Subject subject)
 		{
 			if (ModelState.IsValid)
 			{
@@ -55,6 +68,13 @@ namespace project_mvc.Controllers.DataControllers.University
 
 			var subject = await _response.Content.ReadFromJsonAsync<Subject>();
 
+			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
+				"Id", "FacultyName", subject!.FacultyId);
+
 			return View(subject);
 		}
 
@@ -63,7 +83,7 @@ namespace project_mvc.Controllers.DataControllers.University
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName")] Subject subject)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,SubjectName,FacultyId")] Subject subject)
 		{
 			if (ModelState.IsValid)
 			{

@@ -18,7 +18,8 @@ namespace project_mvc.Models.DataModels.People
 		[StringLength(50)]
 		public string? LastName { get; set; }
 
-		[Required, StringLength(12)]
+		[Required]
+		[StringLength(12)]
 		public string? FacultyNumber { get; set; }
 
 		[Required]
@@ -39,10 +40,10 @@ namespace project_mvc.Models.DataModels.People
 	public class StudentsSubjects
 	{
 		[Key, Column(Order = 0)]
-		public int StudentsId { get; set; }
+		public int StudentId { get; set; }
 
 		[Key, Column(Order = 1)]
-		public int SubjectsId { get; set; }
+		public int SubjectId { get; set; }
 
 		public virtual Student? Student { get; set; }
 

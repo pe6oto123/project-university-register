@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using project_api._Util;
 using project_api.Database.Contexts;
 using project_api.Database.Entities.University;
 
@@ -18,17 +19,78 @@ namespace project_api.Controllers.University
 
 		// GET: api/Subjects
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Subject>>> GetSubject(string? subjectSearch = null)
+		public async Task<ActionResult<IEnumerable<Subject>>> GetSubject(int? facultyId = null, string? subjectSearch = null, string? searchParam = "SubjectName")
 		{
 			if (_context.Subject == null)
 			{
 				return NotFound();
 			}
 
-			IEnumerable<Subject> subjects = await _context.Subject.ToListAsync();
+			IEnumerable<Subject> subjects = await _context.Subject
+				.Include(s => s.Faculty)
+				.Where(s => facultyId == null || s.FacultyId == facultyId)
+				.ToListAsync();
 
 			if (!string.IsNullOrEmpty(subjectSearch))
-				subjects = subjects.Where(s => s.SubjectName!.Contains(subjectSearch));
+				subjects = subjects.Where(s => HelperClass.GetPropertyValue(s, searchParam!)!.ToString()!.Contains(subjectSearch));
+
+			return subjects.ToList();
+		}
+
+		// GET: api/Subjects/Schedule
+		[HttpGet("Schedule/courseId={courseId}&year={year}")]
+		public async Task<ActionResult<IEnumerable<Subject>>> GetSubjectSchedule(int courseId, int year, string? subjectSearch = null)
+		{
+			if (_context.Subject == null)
+			{
+				return NotFound();
+			}
+
+			var schedules = await _context.Schedule
+				.Include(s => s.SchedulesSubjects)
+				.Where(s => s.CourseId == courseId)
+				.ToListAsync();
+
+			var facultyId = (await _context.Course
+				.Include(s => s.Faculty)
+				.FirstAsync(s => s.Id == courseId)).FacultyId;
+
+			List<int> subjectIds = new();
+			int scheduleId = schedules.Where(s => s.Year == year).FirstOrDefault()!.Id;
+
+			foreach (var schedule in schedules)
+				foreach (var subject in schedule.SchedulesSubjects!)
+					subjectIds.Add(subject.SubjectId);
+
+
+			var subjects = await _context.Subject
+				.Include(s => s.Faculty)
+				.Include(s => s.SchedulesSubjects)
+				.Where(s => s.FacultyId == facultyId)
+				.Where(s => !s.SchedulesSubjects!.Any() ||
+					s.SchedulesSubjects!.Any(x => x.ScheduleId == scheduleId) ||
+					s.SchedulesSubjects!.Any(x => !subjectIds.Contains(x.SubjectId)))
+				.Where(s => subjectSearch == null || s.SubjectName!.Contains(subjectSearch!))
+				.ToListAsync();
+
+
+			return subjects.ToList();
+		}
+
+		// GET: api/Subjects/Faculty
+		[HttpGet("Faculty/facultyId={facultyId}")]
+		public async Task<ActionResult<IEnumerable<Subject>>> GetSubjectsFaculty(int facultyId, string? subjectSearch = null)
+		{
+			if (_context.Subject == null)
+			{
+				return NotFound();
+			}
+
+			var subjects = await _context.Subject
+				.Where(s => s.FacultyId == facultyId)
+				.Where(s => subjectSearch == null ||
+					s.SubjectName!.Contains(subjectSearch!))
+				.ToListAsync();
 
 			return subjects.ToList();
 		}
@@ -41,7 +103,9 @@ namespace project_api.Controllers.University
 			{
 				return NotFound();
 			}
-			var subject = await _context.Subject.FindAsync(id);
+			var subject = await _context.Subject
+				.Include(s => s.Faculty)
+				.FirstAsync(s => s.Id == id);
 
 			if (subject == null)
 			{

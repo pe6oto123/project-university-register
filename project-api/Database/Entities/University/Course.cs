@@ -15,6 +15,9 @@ namespace project_api.Database.Entities.University
 		[Required, Column(TypeName = "date")]
 		public DateTime? Enrolment { get; set; }
 
+		[Required, Range(1, 4)]
+		public int? CourseLength { get; set; }
+
 		[Required]
 		public int? FacultyId { get; set; }
 		public virtual Faculty? Faculty { get; set; }
@@ -52,6 +55,6 @@ namespace project_api.Database.Entities.University
 		[Required]
 		public int? Year { get; set; }
 
-		public virtual ICollection<Subject>? Subjects { get; set; }
+		public virtual ICollection<SchedulesSubjects>? SchedulesSubjects { get; set; }
 	}
 }

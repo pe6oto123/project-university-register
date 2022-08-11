@@ -23,6 +23,31 @@
 			<button type="submit" class="btn btn-primary" style="margin-left:0.5rem">
 				<i class="bi bi-search"></i>
 			</button>
+			<div class="btn-group" style="padding-left:1rem; flex-wrap:wrap">
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "SubjectName", @ViewBag.Search == "SubjectName", new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="subjectName"
+					})
+					<label class="form-check-label" for="firstName">
+						Subject
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Faculty.FacultyName", @ViewBag.Search == "Faculty.FacultyName",
+					new
+					{
+					@class="form-check-input",
+					type="radio",
+					id="facultyName"
+					})
+					<label class="form-check-label" for="facultyName">
+						Faculty
+					</label>
+				</div>
+			</div>
 		</div>
 		}
 	</div>
@@ -32,6 +57,9 @@
 				<tr>
 					<th>
 						@Html.DisplayNameFor(model => model.SubjectName)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.Faculty!.FacultyName)
 					</th>
 					<th style="text-align-last: center;table-layout: fixed;width: 5rem;">
 						<a type="button" class="btn btn-primary btn-sm btn-lg" asp-action="Create">
@@ -46,6 +74,9 @@
 				<tr>
 					<td>
 						@Html.DisplayFor(modelItem => item.SubjectName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.Faculty!.FacultyName)
 					</td>
 					<td class="align-middle">
 						<div class="btn-group">

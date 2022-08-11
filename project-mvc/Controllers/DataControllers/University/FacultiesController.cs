@@ -92,7 +92,7 @@ namespace project_mvc.Controllers.DataControllers.University
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
-				"Id", "CityName", faculty!.Address!.City!.Id);
+				"Id", "CityName", faculty!.Address!.CityId);
 
 			return View(faculty);
 		}
