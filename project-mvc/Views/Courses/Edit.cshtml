@@ -1,50 +1,60 @@
 ﻿@model project_mvc.Models.DataModels.University.Course
 
 @{
-    ViewData["Title"] = "Edit";
+	ViewData["Title"] = "Edit";
 }
 
 <h1>Edit Course</h1>
 
 <hr />
 <div class="row" style="place-content:center">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-				@Html.LabelFor(model => model.CourseNId, "Course", htmlAttributes: new { @class = "control-label",
-				style="font-weight:bold" })
-				@Html.DropDownListFor(model => model.CourseNId, ViewBag.CourseNs as IEnumerable<SelectListItem>, new {
-					@class = "form-control"})
-					@Html.ValidationMessageFor(model => model.CourseNId, "", new { @class = "text-danger" })
+	<div class="col-md-4">
+		<form asp-action="Edit">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<input type="hidden" asp-for="Id" />
+			<div class="form-group">
+				@Html.LabelFor(model => model.CourseNId, "Course", htmlAttributes: new
+				{
+					@class = "control-label",
+				style = "font-weight:bold"
+				})
+				@Html.DropDownListFor(model => model.CourseNId, ViewBag.CourseNs as IEnumerable<SelectListItem>, new
+				{
+					@class = "form-control"
+				})
+				@Html.ValidationMessageFor(model => model.CourseNId, "", new { @class = "text-danger" })
 			</div>
-            <div class="form-group">
-				@Html.LabelFor(model => model.FacultyId, "Faculty", htmlAttributes: new { @class = "control-label",
-				style="font-weight:bold" })
-				@Html.DropDownListFor(model => model.FacultyId, ViewBag.Faculties as IEnumerable<SelectListItem>, new {
-					@class = "form-control"})
-					@Html.ValidationMessageFor(model => model.CourseNId, "", new { @class = "text-danger" })
+			<div class="form-group">
+				@Html.LabelFor(model => model.FacultyId, "Faculty", htmlAttributes: new
+				{
+					@class = "control-label",
+				style = "font-weight:bold"
+				})
+				@Html.DropDownListFor(model => model.FacultyId, ViewBag.Faculties as IEnumerable<SelectListItem>, new
+				{
+					@class = "form-control"
+				})
+				@Html.ValidationMessageFor(model => model.CourseNId, "", new { @class = "text-danger" })
 			</div>
-            <div class="form-group">
+			<div class="form-group">
 				<label asp-for="CourseLength" class="control-label" style="font-weight:bold"></label>
 				<input asp-for="CourseLength" class="form-control" autocomplete="off" />
 				<span asp-validation-for="CourseLength" class="text-danger"></span>
 			</div>
-            <div class="form-group">
-                <label asp-for="Enrolment" class="control-label" style="font-weight:bold"></label>
-                <input asp-for="Enrolment" class="form-control" />
-                <span asp-validation-for="Enrolment" class="text-danger"></span>
-            </div>
-            <div class="form-group" style="margin-top:0.5rem; float:right">
-                <input type="submit" value="Save" class="btn btn-primary" />
-                <a class="btn btn-secondary" asp-action="Index">Back to List</a>
-            </div>
-        </form>
-    </div>
+			<div class="form-group">
+				<label asp-for="Enrolment" class="control-label" style="font-weight:bold"></label>
+				<input asp-for="Enrolment" class="form-control" />
+				<span asp-validation-for="Enrolment" class="text-danger"></span>
+			</div>
+			<div class="form-group" style="margin-top:0.5rem; float:right">
+				<input type="submit" value="Save" class="btn btn-primary" />
+				<a class="btn btn-secondary" asp-action="Index">Back to List</a>
+			</div>
+		</form>
+	</div>
 </div>
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

@@ -1,9 +1,9 @@
-﻿using project_api.Database.Entities.People;
+﻿using project_mvc.Models.DataModels.People;
 using System.ComponentModel.DataAnnotations;
 
-namespace project_api.Database.Entities.Access
+namespace project_mvc.Models.DataModels.Access
 {
-	public class Account
+	public class User
 	{
 		[Key]
 		public int Id { get; set; }

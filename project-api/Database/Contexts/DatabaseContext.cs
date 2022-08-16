@@ -15,7 +15,7 @@ namespace project_api.Database.Contexts
 			//ChangeTracker.DeleteOrphansTiming = CascadeTiming.OnSaveChanges;
 		}
 
-		public DbSet<Account> Account => Set<Account>();
+		public DbSet<User> User => Set<User>();
 		public DbSet<UserRole> UserRole => Set<UserRole>();
 		public DbSet<Faculty> Faculty => Set<Faculty>();
 		public DbSet<FacultyNum> FacultyNum => Set<FacultyNum>();
@@ -34,6 +34,10 @@ namespace project_api.Database.Contexts
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.Entity<Teacher>()
+				.HasIndex(s => s.Email)
+				.IsUnique();
+
 			#region StudentsSubjects
 			modelBuilder
 				.Entity<StudentsSubjects>()

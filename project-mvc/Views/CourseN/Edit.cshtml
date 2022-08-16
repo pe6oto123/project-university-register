@@ -1,7 +1,7 @@
 ﻿@model project_mvc.Models.DataModels.University.CourseN
 
 @{
-ViewData["Title"] = "Edit";
+	ViewData["Title"] = "Edit";
 }
 
 <h1 style="text-align:center">Edit Course name</h1>
@@ -26,6 +26,6 @@ ViewData["Title"] = "Edit";
 </div>
 
 @section Scripts {
-@{
-await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

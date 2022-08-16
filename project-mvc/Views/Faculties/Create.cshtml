@@ -1,7 +1,7 @@
 ﻿@model project_mvc.Models.DataModels.University.Faculty
 
 @{
-ViewData["Title"] = "Create";
+	ViewData["Title"] = "Create";
 }
 
 <h1 style="text-align:center">Create Faculty</h1>
@@ -23,11 +23,14 @@ ViewData["Title"] = "Create";
 			</div>
 			<div class="form-group">
 				<input type="hidden" asp-for="AddressId" value="0" />
-				@Html.LabelFor(model => model.Address!.CityId, "City",htmlAttributes: new { @class = "control-label",
-				style="font-weight:bold" })
+				@Html.LabelFor(model => model.Address!.CityId, "City", htmlAttributes: new
+				{
+					@class = "control-label",
+				style = "font-weight:bold"
+				})
 				@Html.DropDownListFor(model => model.Address!.CityId, ViewBag.Cities as IEnumerable<SelectListItem>, new
-					{ @class = "form-control"})
-					@Html.ValidationMessageFor(model => model.Address!.CityId, "", new { @class = "text-danger" })
+					{ @class = "form-control" })
+				@Html.ValidationMessageFor(model => model.Address!.CityId, "", new { @class = "text-danger" })
 			</div>
 			<div class="form-group" style="margin-top: 0.5rem; float: right">
 				<input type="submit" value="Create" class="btn btn-primary" />
@@ -39,5 +42,5 @@ ViewData["Title"] = "Create";
 
 
 @section Scripts {
-@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

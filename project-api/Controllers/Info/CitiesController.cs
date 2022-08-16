@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project_api._Util;
 using project_api.Database.Contexts;
@@ -36,8 +37,11 @@ namespace project_api.Controllers.Info
 
 		// GET: api/Cities/5
 		[HttpGet("{id}")]
+		[Authorize]
 		public async Task<ActionResult<City>> GetCity(int id)
 		{
+			var test = HttpContext.Request.Headers["Authorization"];
+
 			if (_context.City == null)
 			{
 				return NotFound();

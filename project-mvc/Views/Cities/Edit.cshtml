@@ -1,7 +1,7 @@
 ﻿@model project_mvc.Models.DataModels.Location.City
 
 @{
-ViewData["Title"] = "Edit";
+	ViewData["Title"] = "Edit";
 }
 
 <h1 style="text-align:center">Edit City</h1>
@@ -36,6 +36,6 @@ ViewData["Title"] = "Edit";
 </div>
 
 @section Scripts {
-@{
-await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

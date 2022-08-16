@@ -1,7 +1,7 @@
 ﻿@model project_mvc.Models.DataModels.People.Student
 
 @{
-ViewData["Title"] = "Edit";
+	ViewData["Title"] = "Edit";
 }
 
 <h1 style="text-align:center">Edit Student</h1>
@@ -24,18 +24,28 @@ ViewData["Title"] = "Edit";
 				<span asp-validation-for="LastName" class="text-danger"></span>
 			</div>
 			<div class="form-group">
-				@Html.LabelFor(model => model.FacultyId, "Faculty", htmlAttributes: new { @class = "control-label",
-				style="font-weight:bold" })
-				@Html.DropDownListFor(model => model.FacultyId, ViewBag.Faculties as IEnumerable<SelectListItem>, new {
-					@class = "form-control"})
-					@Html.ValidationMessageFor(model => model.FacultyId, "", new { @class = "text-danger" })
+				@Html.LabelFor(model => model.FacultyId, "Faculty", htmlAttributes: new
+				{
+					@class = "control-label",
+				style = "font-weight:bold"
+				})
+				@Html.DropDownListFor(model => model.FacultyId, ViewBag.Faculties as IEnumerable<SelectListItem>, new
+				{
+					@class = "form-control"
+				})
+				@Html.ValidationMessageFor(model => model.FacultyId, "", new { @class = "text-danger" })
 			</div>
 			<div class="form-group">
-				@Html.LabelFor(model => model.CourseId, "Course", htmlAttributes: new { @class = "control-label",
-				style="font-weight:bold" })
-				@Html.DropDownListFor(model => model.CourseId, ViewBag.Courses as IEnumerable<SelectListItem>, new {
-					@class = "form-control"})
-					@Html.ValidationMessageFor(model => model.CourseId, "", new { @class = "text-danger" })
+				@Html.LabelFor(model => model.CourseId, "Course", htmlAttributes: new
+				{
+					@class = "control-label",
+				style = "font-weight:bold"
+				})
+				@Html.DropDownListFor(model => model.CourseId, ViewBag.Courses as IEnumerable<SelectListItem>, new
+				{
+					@class = "form-control"
+				})
+				@Html.ValidationMessageFor(model => model.CourseId, "", new { @class = "text-danger" })
 			</div>
 			<div class="form-group">
 				<label asp-for="Address!.AddressName" class="control-label" style="font-weight:bold"></label>
@@ -45,11 +55,14 @@ ViewData["Title"] = "Edit";
 			<div class="form-group">
 				<input type="hidden" asp-for="AddressId" />
 				<input type="hidden" asp-for="Address!.Id" />
-				@Html.LabelFor(model => model.Address!.CityId, "City",htmlAttributes: new { @class = "control-label",
-				style="font-weight:bold" })
+				@Html.LabelFor(model => model.Address!.CityId, "City", htmlAttributes: new
+				{
+					@class = "control-label",
+				style = "font-weight:bold"
+				})
 				@Html.DropDownListFor(model => model.Address!.CityId, ViewBag.Cities as IEnumerable<SelectListItem>, new
-					{ @class = "form-control"})
-					@Html.ValidationMessageFor(model => model.Address!.CityId, "", new { @class = "text-danger" })
+					{ @class = "form-control" })
+				@Html.ValidationMessageFor(model => model.Address!.CityId, "", new { @class = "text-danger" })
 			</div>
 			<div class="form-group" style="margin-top:0.5rem; float:right">
 				<input type="submit" value="Save" class="btn btn-primary" />
@@ -61,5 +74,5 @@ ViewData["Title"] = "Edit";
 
 
 @section Scripts {
-@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

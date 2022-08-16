@@ -11,17 +11,17 @@ using project_api.Database.Contexts;
 namespace project_api.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220811123336_Initialize")]
+    [Migration("20220814104451_Initialize")]
     partial class Initialize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.7")
+                .HasAnnotation("ProductVersion", "6.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("project_api.Database.Entities.Access.Account", b =>
+            modelBuilder.Entity("project_api.Database.Entities.Access.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,7 +54,7 @@ namespace project_api.Database.Migrations
 
                     b.HasIndex("UserRoleId");
 
-                    b.ToTable("Account");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("project_api.Database.Entities.Access.UserRole", b =>
@@ -231,6 +231,9 @@ namespace project_api.Database.Migrations
 
                     b.HasIndex("AddressId");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("FacultyId");
 
                     b.ToTable("Teacher");
@@ -395,7 +398,7 @@ namespace project_api.Database.Migrations
                     b.ToTable("Subject");
                 });
 
-            modelBuilder.Entity("project_api.Database.Entities.Access.Account", b =>
+            modelBuilder.Entity("project_api.Database.Entities.Access.User", b =>
                 {
                     b.HasOne("project_api.Database.Entities.People.Student", "Student")
                         .WithMany()

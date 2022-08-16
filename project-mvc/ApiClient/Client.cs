@@ -4,6 +4,7 @@ namespace project_mvc.ApiClient
 {
 	public class Client
 	{
+		public static readonly string _routeUsers = "api/Users";
 		public static readonly string _routeCities = "api/Cities";
 		public static readonly string _routeCourseN = "api/CourseN";
 		public static readonly string _routeCourses = "api/Courses";
