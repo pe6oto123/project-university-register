@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using project_mvc.ApiClient;
 using project_mvc.Models.DataModels.University;
 
 namespace project_mvc.Controllers.DataControllers.Info
 {
+	[Authorize(Roles = "Admin")]
 	public class CourseNController : Controller
 	{
 		private HttpResponseMessage? _response;
@@ -13,7 +15,10 @@ namespace project_mvc.Controllers.DataControllers.Info
 		{
 			ViewBag.CourseSearch = courseSearch;
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourseN}?courseSearch={courseSearch}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourseN}?courseSearch={courseSearch}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -37,7 +42,10 @@ namespace project_mvc.Controllers.DataControllers.Info
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeCourseN}/", courseN);
+				string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+				_response = await Client.GetClient(token)
+					.PostAsJsonAsync($"{Client._routeCourseN}/", courseN);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -49,7 +57,10 @@ namespace project_mvc.Controllers.DataControllers.Info
 		// GET: CourseN/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourseN}/{id}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourseN}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return NotFound();
 
@@ -72,7 +83,10 @@ namespace project_mvc.Controllers.DataControllers.Info
 
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeCourseN}/{id}", courseN);
+				string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+				_response = await Client.GetClient(token)
+					.PutAsJsonAsync($"{Client._routeCourseN}/{id}", courseN);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -87,7 +101,10 @@ namespace project_mvc.Controllers.DataControllers.Info
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"{Client._routeCourseN}/{id}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.DeleteAsync($"{Client._routeCourseN}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 

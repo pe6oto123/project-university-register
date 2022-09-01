@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using project_mvc.ApiClient;
 using project_mvc.Models.DataModels.Location;
@@ -7,6 +8,7 @@ using project_mvc.Models.DataModels.University;
 
 namespace project_mvc.Controllers.DataControllers.People
 {
+	[Authorize(Roles = "Admin")]
 	public class StudentsController : Controller
 	{
 		private HttpResponseMessage? _response;
@@ -21,7 +23,10 @@ namespace project_mvc.Controllers.DataControllers.People
 
 			ViewBag.TeacherSearch = studentSearch;
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeStudents}?studentSearch={studentSearch}&searchParam={searchParam}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeStudents}?studentSearch={studentSearch}&searchParam={searchParam}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -30,42 +35,29 @@ namespace project_mvc.Controllers.DataControllers.People
 			return View(students);
 		}
 
-		/*// GET: Students/Details/5
-		public async Task<IActionResult> Details(int? id)
-		{
-			if (id == null || _context.Student == null)
-			{
-				return NotFound();
-			}
-
-			var student = await _context.Student
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (student == null)
-			{
-				return NotFound();
-			}
-
-			return View(student);
-		}*/
-
 		// GET: Students/Create
 		public async Task<IActionResult> Create()
 		{
-			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCities}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
 				"Id", "CityName");
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
 				"Id", "FacultyName");
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourses}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -84,7 +76,10 @@ namespace project_mvc.Controllers.DataControllers.People
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeStudents}/", student);
+				string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+				_response = await Client.GetClient(token)
+					.PostAsJsonAsync($"{Client._routeStudents}/", student);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -96,27 +91,33 @@ namespace project_mvc.Controllers.DataControllers.People
 		// GET: Students/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"{Client._routeStudents}/{id}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeStudents}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var student = await _response.Content.ReadFromJsonAsync<Student>();
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCities}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Cities = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<City>>(),
 				"Id", "CityName", student!.AddressId);
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
 				"Id", "FacultyName", student!.FacultyId);
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourses}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -136,7 +137,10 @@ namespace project_mvc.Controllers.DataControllers.People
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeStudents}/{id}", student);
+				string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+				_response = await Client.GetClient(token)
+					.PutAsJsonAsync($"{Client._routeStudents}/{id}", student);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -150,7 +154,10 @@ namespace project_mvc.Controllers.DataControllers.People
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"{Client._routeStudents}/{id}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.DeleteAsync($"{Client._routeStudents}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 

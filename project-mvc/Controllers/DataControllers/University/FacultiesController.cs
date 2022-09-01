@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using project_mvc.ApiClient;
 using project_mvc.Models.DataModels.Location;
@@ -6,6 +7,7 @@ using project_mvc.Models.DataModels.University;
 
 namespace project_mvc.Controllers.DataControllers.University
 {
+	[Authorize(Roles = "Admin")]
 	public class FacultiesController : Controller
 	{
 		private HttpResponseMessage? _response;
@@ -20,7 +22,10 @@ namespace project_mvc.Controllers.DataControllers.University
 
 			ViewBag.FacultySearch = facultySearch;
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}?facultySearch={facultySearch}&searchParam={searchParam}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeFaculties}?facultySearch={facultySearch}&searchParam={searchParam}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -29,28 +34,13 @@ namespace project_mvc.Controllers.DataControllers.University
 			return View(faculties);
 		}
 
-		/*// GET: Faculties/Details/5
-		public async Task<IActionResult> Details(int? id)
-		{
-			if (id == null || _context.Faculty == null)
-			{
-				return NotFound();
-			}
-
-			var faculty = await _context.Faculty
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (faculty == null)
-			{
-				return NotFound();
-			}
-
-			return View(faculty);
-		}*/
-
 		// GET: Faculties/Create
 		public async Task<IActionResult> Create()
 		{
-			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCities}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -69,7 +59,10 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeFaculties}/", faculty);
+				string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+				_response = await Client.GetClient(token)
+					.PostAsJsonAsync($"{Client._routeFaculties}/", faculty);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -81,13 +74,17 @@ namespace project_mvc.Controllers.DataControllers.University
 		// GET: Faculties/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}/{id}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeFaculties}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var faculty = await _response.Content.ReadFromJsonAsync<Faculty>();
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCities}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCities}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -106,7 +103,10 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeFaculties}/{id}", faculty);
+				string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+				_response = await Client.GetClient(token)
+					.PutAsJsonAsync($"{Client._routeFaculties}/{id}", faculty);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -120,7 +120,10 @@ namespace project_mvc.Controllers.DataControllers.University
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"{Client._routeFaculties}/{id}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.DeleteAsync($"{Client._routeFaculties}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 

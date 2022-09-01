@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project_api._Util;
 using project_api.Database.Contexts;
@@ -19,6 +20,7 @@ namespace project_api.Controllers.People
 
 		// GET: api/Students
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<IEnumerable<Student>>> GetStudent(string? studentSearch = null, string? searchParam = "FirstName")
 		{
 			if (_context.Student == null)
@@ -42,6 +44,7 @@ namespace project_api.Controllers.People
 
 		// GET: api/Students/5
 		[HttpGet("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<Student>> GetStudent(int id)
 		{
 			if (_context.Student == null)
@@ -56,8 +59,6 @@ namespace project_api.Controllers.People
 				.Include(s => s.Course!.CourseN)
 				.FirstAsync(s => s.Id == id);
 
-
-
 			if (student == null)
 			{
 				return NotFound();
@@ -66,9 +67,43 @@ namespace project_api.Controllers.People
 			return student;
 		}
 
+		// GET: api/Students/Subject/subjectId=5
+		[HttpGet("Subject/subjectId={subjectId}")]
+		/*[Authorize(Roles = "Teacher")]*/
+		public async Task<ActionResult<IEnumerable<Student>>> GetStudentsSubject(int subjectId, string? studentSearch = null, string? searchParam = "FirstName")
+		{
+			if (_context.Student == null)
+			{
+				return NotFound();
+			}
+
+			IEnumerable<Student> student = await _context.Student
+				.Include(s => s.Faculty)
+				.Include(s => s.Course)
+				.Include(s => s.Course!.CourseN)
+				.Include(s => s.StudentsSubjects)
+				.Include(s => s.StudentsSubjects!
+					.Where(s => s.SubjectId == subjectId))
+				.ThenInclude(s => s.Grade)
+				.Where(s => s.StudentsSubjects!
+					.Any(x => x.SubjectId == subjectId))
+				.ToListAsync();
+
+			if (!string.IsNullOrEmpty(studentSearch))
+				student = student.Where(s => HelperClass.GetPropertyValue(s, searchParam!)!.ToString()!.Contains(studentSearch));
+
+			if (student == null)
+			{
+				return NotFound();
+			}
+
+			return student.ToList();
+		}
+
 		// PUT: api/Students/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPut("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> PutStudent(int id, Student student)
 		{
 			if (id != student.Id || student.AddressId != student.Address!.Id)
@@ -101,6 +136,7 @@ namespace project_api.Controllers.People
 		// POST: api/Students
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<Student>> PostStudent(Student student)
 		{
 			if (_context.Student == null)
@@ -149,6 +185,7 @@ namespace project_api.Controllers.People
 
 		// DELETE: api/Students/5
 		[HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteStudent(int id)
 		{
 			if (_context.Student == null)

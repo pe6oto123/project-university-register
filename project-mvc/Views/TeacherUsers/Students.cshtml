@@ -1,0 +1,159 @@
+﻿@model IEnumerable<project_mvc.Models.DataModels.People.Student>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+@{
+	ViewData["Title"] = "Students";
+}
+
+@using (Html.BeginForm(FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+{
+	@Html.AntiForgeryToken();
+}
+
+<div class="search-group">
+	@using (Html.BeginForm("Students", "TeacherUsers", FormMethod.Get))
+	{
+		<input type="hidden" name="subjectId" value="@ViewBag.SubjectId" />
+		<div class="input-group-text" style="margin-bottom:1rem; padding-left:0.75rem">
+			<h5 style="padding-right:0.5rem;padding-top: inherit;">Students</h5>
+			@Html.TextBox("studentSearch", (string)ViewBag.StudentSearch, new
+		{
+		@class = "form-control rounded",
+		autocomplete = "off",
+		type = "search",
+		placeholder = "Search",
+		style = "width:20%; flex:initial;",
+		aria_describedby = "search-addon",
+		aria_label = "Search"
+		})
+			<button type="submit" class="btn btn-primary" style="margin-left:0.5rem">
+				<i class="bi bi-search"></i>
+			</button>
+			<div class="btn-group" style="padding-left:1rem; flex-wrap:wrap">
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "FirstName", @ViewBag.Search == "FirstName", new
+				{
+				@class = "form-check-input",
+				type = "radio",
+				id = "firstName"
+				})
+					<label class="form-check-label" for="firstName">
+						First Name
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "LastName", @ViewBag.Search == "LastName", new
+				{
+				@class = "form-check-input",
+				type = "radio",
+				id = "lastName"
+				})
+					<label class="form-check-label" for="lastName">
+						Last Name
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "FacultyNumber", @ViewBag.Search == "FacultyNumber", new
+				{
+				@class = "form-check-input",
+				type = "radio",
+				id = "facultyNum"
+				})
+					<label class="form-check-label" for="facultyNum">
+						Factulty №
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Faculty.FacultyName", @ViewBag.Search == "Faculty.FacultyName",
+				new
+				{
+				@class = "form-check-input",
+				type = "radio",
+				id = "faculty"
+				})
+					<label class="form-check-label" for="faculty">
+						Factulty
+					</label>
+				</div>
+				<div class="form-check" style="margin-left:2rem">
+					@Html.RadioButton("searchParam", "Course.CourseN.CourseName",
+				@ViewBag.Search == "Course.CourseN.CourseName", new
+				{
+				@class = "form-check-input",
+				type = "radio",
+				id = "course"
+				})
+					<label class="form-check-label" for="course">
+						Course
+					</label>
+				</div>
+			</div>
+			<div class="btn-group" style="margin-left:auto; padding-left:2rem">
+				<button type="button" onclick="postGrading()" class="btn btn-primary">Save</button>
+				<button type="button" onclick="resetSelection()" class="btn btn-secondary">Reset</button>
+			</div>
+		</div>
+	}
+</div>
+<div class="container" style="padding:initial">
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>
+					@Html.DisplayNameFor(model => model.FirstName)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.LastName)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.FacultyNumber)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Faculty)
+				</th>
+				<th style="width: 8rem">
+					@Html.DisplayName("Grade")
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>
+						@Html.DisplayFor(modelItem => item.FirstName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.LastName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.FacultyNumber)
+					</td>
+					<td>
+						<label style="display:inline-block;padding-right:0.5rem;font-weight:bold">Faculty</label>
+						@Html.DisplayFor(modelItem => item.Faculty!.FacultyName)
+
+						<div>
+							<label style="display:inline-block;padding-right:0.5rem;font-weight:bold">Course</label>
+							@Html.DisplayFor(modelItem => item.Course!.CourseN!.CourseName)
+						</div>
+					</td>
+					<td class="align-middle">
+						@Html.DropDownList($"student-grade-{item.Id}",
+					new SelectList(ViewBag.Grades, "Id", "GradeName", item.StudentsSubjects!.Select(s => s.Grade).First()!.Id), new
+					{
+					@class = "form-control",
+					onchange = $"selectListCache({ViewBag.SubjectId} ,\"student-grade-{item.Id}\")",
+					style = "width: fit-content; text-align: center"
+					})
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+
+@section scripts{
+	<script src="~/js/deletePopup.js" type="text/javascript"></script>
+	<script src="~/js/Teacher/postGrading.js" type="text/javascript"></script>
+}

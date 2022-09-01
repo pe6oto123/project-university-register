@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project_api._Util;
 using project_api.Database.Contexts;
+using project_api.Database.Entities.People;
 using project_api.Database.Entities.University;
 
 namespace project_api.Controllers.University
@@ -19,6 +21,7 @@ namespace project_api.Controllers.University
 
 		// GET: api/Subjects
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<IEnumerable<Subject>>> GetSubject(int? facultyId = null, string? subjectSearch = null, string? searchParam = "SubjectName")
 		{
 			if (_context.Subject == null)
@@ -39,6 +42,7 @@ namespace project_api.Controllers.University
 
 		// GET: api/Subjects/Schedule
 		[HttpGet("Schedule/courseId={courseId}&year={year}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<IEnumerable<Subject>>> GetSubjectSchedule(int courseId, int year, string? subjectSearch = null)
 		{
 			if (_context.Subject == null)
@@ -79,6 +83,7 @@ namespace project_api.Controllers.University
 
 		// GET: api/Subjects/Faculty
 		[HttpGet("Faculty/facultyId={facultyId}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<IEnumerable<Subject>>> GetSubjectsFaculty(int facultyId, string? subjectSearch = null)
 		{
 			if (_context.Subject == null)
@@ -95,8 +100,51 @@ namespace project_api.Controllers.University
 			return subjects.ToList();
 		}
 
+		// GET: api/Subjects/Teacher
+		[HttpGet("Teacher/teacherId={teacherId}")]
+		[Authorize(Roles = "Teacher")]
+		public async Task<ActionResult<IEnumerable<Subject>>> GetSubjectsTeacher(int teacherId, string? subjectSearch = null)
+		{
+			if (_context.Subject == null)
+			{
+				return NotFound();
+			}
+
+			var subjects = await _context.Subject
+				.Include(s => s.TeachersSubjects)
+				.Where(s => s.TeachersSubjects!
+					.Any(x => x.TeacherId == teacherId && x.SubjectId == s.Id))
+				.Where(s => subjectSearch == null ||
+					s.SubjectName!.Contains(subjectSearch))
+				.ToListAsync();
+
+			return subjects.ToList();
+		}
+
+		// GET: api/Subjects/Grades
+		[HttpGet("Grades")]
+		[Authorize(Roles = "Teacher")]
+		public async Task<ActionResult<IEnumerable<Grade>>> GetSubjectGrades()
+		{
+			if (_context.Grade == null)
+			{
+				return NotFound();
+			}
+
+			var grades = await _context.Grade
+				.ToListAsync();
+
+			if (grades == null)
+			{
+				return NotFound();
+			}
+
+			return grades;
+		}
+
 		// GET: api/Subjects/5
 		[HttpGet("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<Subject>> GetSubject(int id)
 		{
 			if (_context.Subject == null)
@@ -118,6 +166,7 @@ namespace project_api.Controllers.University
 		// PUT: api/Subjects/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPut("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> PutSubject(int id, Subject subject)
 		{
 			if (id != subject.Id)
@@ -149,6 +198,7 @@ namespace project_api.Controllers.University
 		// POST: api/Subjects
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<Subject>> PostSubject(Subject subject)
 		{
 			if (_context.Subject == null)

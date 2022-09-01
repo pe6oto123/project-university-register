@@ -17,7 +17,7 @@
 					return prop?.GetValue(obj);
 				}
 			}
-			catch (NullReferenceException)
+			catch (Exception)
 			{
 				return null;
 			}

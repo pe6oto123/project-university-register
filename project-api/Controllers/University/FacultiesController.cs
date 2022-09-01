@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project_api._Util;
 using project_api.Database.Contexts;
@@ -8,6 +9,7 @@ namespace project_api.Controllers.University
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize(Roles = "Admin")]
 	public class FacultiesController : ControllerBase
 	{
 		private readonly DatabaseContext _context;

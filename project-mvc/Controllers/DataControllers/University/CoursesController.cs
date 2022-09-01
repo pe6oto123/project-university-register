@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using project_mvc.ApiClient;
 using project_mvc.Models.DataModels.University;
 
 namespace project_mvc.Controllers.DataControllers.University
 {
+	[Authorize(Roles = "Admin")]
 	public class CoursesController : Controller
 	{
 		private HttpResponseMessage? _response;
@@ -19,7 +21,10 @@ namespace project_mvc.Controllers.DataControllers.University
 
 			ViewBag.CourseSearch = courseSearch;
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}?courseSearch={courseSearch}&searchParam={searchParam}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourses}?courseSearch={courseSearch}&searchParam={searchParam}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -33,19 +38,24 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			ViewBag.SubjectSearch = subjectSearch;
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeSchedules}/courseId={courseId}&year={year}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeSchedules}/courseId={courseId}&year={year}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var schedule = await _response.Content.ReadFromJsonAsync<Schedule>();
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}/{courseId}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourses}/{courseId}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Course = await _response.Content.ReadFromJsonAsync<Course>();
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeSubjects}/Schedule/courseId={courseId}&year={year}?subjectSearch={subjectSearch}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeSubjects}/Schedule/courseId={courseId}&year={year}?subjectSearch={subjectSearch}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -59,22 +69,27 @@ namespace project_mvc.Controllers.DataControllers.University
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Schedule([FromBody] Schedule schedule, string? subjectSearch)
 		{
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeSchedules}/{schedule.Id}?subjectSearch={subjectSearch}", schedule);
+				_response = await Client.GetClient(token)
+					.PutAsJsonAsync($"{Client._routeSchedules}/{schedule.Id}?subjectSearch={subjectSearch}", schedule);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
 				return Json(new { redirectToUrl = Url.Action("Index", "Courses") });
 			}
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}/{schedule.CourseId}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourses}/{schedule.CourseId}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Course = await _response.Content.ReadFromJsonAsync<Course>();
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeSubjects}/Schedule/courseId={schedule.CourseId}&year={schedule.Year}?subjectSearch={subjectSearch}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeSubjects}/Schedule/courseId={schedule.CourseId}&year={schedule.Year}?subjectSearch={subjectSearch}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -86,14 +101,18 @@ namespace project_mvc.Controllers.DataControllers.University
 		// GET: Courses/Create
 		public async Task<IActionResult> Create()
 		{
-			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
 				"Id", "FacultyName");
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourseN}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourseN}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -112,7 +131,10 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PostAsJsonAsync($"{Client._routeCourses}/", course);
+				string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+				_response = await Client.GetClient(token)
+					.PostAsJsonAsync($"{Client._routeCourses}/", course);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -124,20 +146,25 @@ namespace project_mvc.Controllers.DataControllers.University
 		// GET: Courses/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourses}/{id}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourses}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var course = await _response.Content.ReadFromJsonAsync<Course>();
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeFaculties}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			ViewBag.Faculties = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Faculty>>(),
 				"Id", "FacultyName", course!.FacultyId);
 
-			_response = await Client.GetClient().GetAsync($"{Client._routeCourseN}");
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeCourseN}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -156,7 +183,10 @@ namespace project_mvc.Controllers.DataControllers.University
 		{
 			if (ModelState.IsValid)
 			{
-				_response = await Client.GetClient().PutAsJsonAsync($"{Client._routeCourses}/{id}", course);
+				string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+				_response = await Client.GetClient(token)
+					.PutAsJsonAsync($"{Client._routeCourses}/{id}", course);
 				if (!_response.IsSuccessStatusCode)
 					return Problem(await _response.Content.ReadAsStringAsync());
 
@@ -170,7 +200,10 @@ namespace project_mvc.Controllers.DataControllers.University
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int id)
 		{
-			_response = await Client.GetClient().DeleteAsync($"{Client._routeCourses}/{id}");
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.DeleteAsync($"{Client._routeCourses}/{id}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 

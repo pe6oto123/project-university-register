@@ -49,7 +49,8 @@ namespace project_api.Database.Entities.People
 
 		public virtual Subject? Subject { get; set; }
 
-		[MaxLength(20)]
+		[Required]
+		public int? GradeId { get; set; }
 		public virtual Grade? Grade { get; set; }
 	}
 

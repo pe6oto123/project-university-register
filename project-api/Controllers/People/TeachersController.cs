@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project_api._Util;
 using project_api.Database.Contexts;
 using project_api.Database.Entities.People;
+using System.Data;
 
 namespace project_api.Controllers.People
 {
@@ -19,6 +21,7 @@ namespace project_api.Controllers.People
 
 		// GET: api/Teachers
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<IEnumerable<Teacher>>> GetTeacher(string? teacherSearch = null, string? searchParam = "FirstName")
 		{
 			if (_context.Teacher == null)
@@ -38,8 +41,32 @@ namespace project_api.Controllers.People
 			return teacher.ToList();
 		}
 
+		// PUT: api/Teachers/GradeStudents
+		[HttpPut("GradeStudents")]
+		[Authorize(Roles = "Teacher")]
+		public async Task<IActionResult> GradeStudents(IEnumerable<StudentsSubjects> studentsSubjects)
+		{
+			if (_context.StudentsSubjects == null)
+			{
+				return NotFound();
+			}
+
+			var removeStuSubj = await _context.StudentsSubjects.ToListAsync();
+			removeStuSubj = removeStuSubj
+				.Where(s => studentsSubjects.Any(x => x.StudentId == s.StudentId))
+				.Where(s => studentsSubjects.Any(x => x.SubjectId == s.SubjectId))
+				.ToList();
+
+			_context.RemoveRange(removeStuSubj);
+			_context.AddRange(studentsSubjects);
+			await _context.SaveChangesAsync();
+
+			return NoContent();
+		}
+
 		// GET: api/Teachers/5
 		[HttpGet("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<Teacher>> GetTeacher(int id)
 		{
 			if (_context.Teacher == null)
@@ -65,6 +92,7 @@ namespace project_api.Controllers.People
 		// PUT: api/Teachers/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPut("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> PutTeacher(int id, Teacher teacher, bool editSubjects = false, string? subjectSearch = null)
 		{
 			if (id != teacher.Id || teacher.AddressId != teacher.Address!.Id)
@@ -109,6 +137,7 @@ namespace project_api.Controllers.People
 		// POST: api/Teachers
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<Teacher>> PostTeacher(Teacher teacher)
 		{
 			if (_context.Teacher == null)
@@ -123,6 +152,7 @@ namespace project_api.Controllers.People
 
 		// DELETE: api/Teachers/5
 		[HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> DeleteTeacher(int id)
 		{
 			if (_context.Teacher == null)

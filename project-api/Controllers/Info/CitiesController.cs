@@ -9,6 +9,7 @@ namespace project_api.Controllers.Info
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize(Roles = "Admin")]
 	public class CitiesController : ControllerBase
 	{
 		private readonly DatabaseContext _context;
@@ -37,11 +38,8 @@ namespace project_api.Controllers.Info
 
 		// GET: api/Cities/5
 		[HttpGet("{id}")]
-		[Authorize]
 		public async Task<ActionResult<City>> GetCity(int id)
 		{
-			var test = HttpContext.Request.Headers["Authorization"];
-
 			if (_context.City == null)
 			{
 				return NotFound();

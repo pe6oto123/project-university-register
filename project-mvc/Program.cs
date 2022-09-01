@@ -11,8 +11,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 	.AddCookie(options =>
 	{
 		options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-		options.SlidingExpiration = true;
-		options.AccessDeniedPath = "/Forbidden/";
+		options.SlidingExpiration = false;
+		options.AccessDeniedPath = new PathString("/");
 	});
 
 

@@ -14,13 +14,14 @@ namespace project_mvc.ApiClient
 		public static readonly string _routeTeachers = "api/Teachers";
 		public static readonly string _routeStudents = "api/Students";
 
-		public static HttpClient GetClient()
+		public static HttpClient GetClient(string? token)
 		{
 			HttpClient _httpClient = new()
 			{
 				BaseAddress = new Uri("https://localhost:7011")
 			};
 			_httpClient.DefaultRequestHeaders.Accept.Clear();
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 			_httpClient.DefaultRequestHeaders.Accept
 				.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
