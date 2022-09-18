@@ -26,7 +26,7 @@
 				@Html.LabelFor(model => model.Address!.CityId, "City", htmlAttributes: new
 				{
 					@class = "control-label",
-				style = "font-weight:bold"
+					style = "font-weight:bold"
 				})
 				@Html.DropDownListFor(model => model.Address!.CityId, ViewBag.Cities as IEnumerable<SelectListItem>, new
 					{ @class = "form-control" })

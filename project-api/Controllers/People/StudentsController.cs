@@ -29,6 +29,7 @@ namespace project_api.Controllers.People
 			}
 
 			IEnumerable<Student> students = await _context.Student
+				.Include(s => s.Gender)
 				.Include(s => s.Address)
 				.Include(s => s.Address!.City)
 				.Include(s => s.Faculty)
@@ -44,7 +45,7 @@ namespace project_api.Controllers.People
 
 		// GET: api/Students/5
 		[HttpGet("{id}")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin, Student")]
 		public async Task<ActionResult<Student>> GetStudent(int id)
 		{
 			if (_context.Student == null)
@@ -52,11 +53,19 @@ namespace project_api.Controllers.People
 				return NotFound();
 			}
 			var student = await _context.Student
-				.Include(s => s.Address)
-				.Include(s => s.Address!.City)
+				.Include(s => s.Gender)
+				.Include(s => s.Address!)
+				.ThenInclude(s => s.City)
 				.Include(s => s.Faculty)
-				.Include(s => s.Course)
-				.Include(s => s.Course!.CourseN)
+				.Include(s => s.Course!)
+				.ThenInclude(s => s.CourseN)
+				.Include(s => s.StudentsSubjects)
+				.Include(s => s.StudentsSubjects!)
+				.ThenInclude(s => s.Subject)
+				.Include(s => s.StudentsSubjects!)
+				.ThenInclude(s => s.Subject)
+				.Include(s => s.StudentsSubjects!)
+				.ThenInclude(s => s.Grade)
 				.FirstAsync(s => s.Id == id);
 
 			if (student == null)
@@ -67,9 +76,29 @@ namespace project_api.Controllers.People
 			return student;
 		}
 
+		[HttpGet("Gender")]
+		[Authorize(Roles = "Admin")]
+		public async Task<ActionResult<IEnumerable<Gender>>> GetGender()
+		{
+			if (_context.Student == null)
+			{
+				return NotFound();
+			}
+
+			IEnumerable<Gender> gender = await _context.Gender
+				.ToListAsync();
+
+			if (gender == null)
+			{
+				return NotFound();
+			}
+
+			return gender.ToList();
+		}
+
 		// GET: api/Students/Subject/subjectId=5
 		[HttpGet("Subject/subjectId={subjectId}")]
-		/*[Authorize(Roles = "Teacher")]*/
+		[Authorize(Roles = "Teacher")]
 		public async Task<ActionResult<IEnumerable<Student>>> GetStudentsSubject(int subjectId, string? studentSearch = null, string? searchParam = "FirstName")
 		{
 			if (_context.Student == null)
@@ -79,6 +108,7 @@ namespace project_api.Controllers.People
 
 			IEnumerable<Student> student = await _context.Student
 				.Include(s => s.Faculty)
+				.Include(s => s.Gender)
 				.Include(s => s.Course)
 				.Include(s => s.Course!.CourseN)
 				.Include(s => s.StudentsSubjects)
@@ -172,7 +202,9 @@ namespace project_api.Controllers.People
 					subjects.Add(new StudentsSubjects()
 					{
 						StudentId = student.Id,
-						SubjectId = subject.SubjectId
+						SubjectId = subject.SubjectId,
+						Year = schedule.Year,
+						GradeId = 1
 					});
 				}
 			student.StudentsSubjects = subjects;
@@ -202,6 +234,9 @@ namespace project_api.Controllers.People
 			}
 
 			_context.Address.Remove(student.Address!);
+			_context.User.Remove(await _context.User
+				.Where(s => s.StudentId == id)
+				.FirstAsync());
 			_context.Student.Remove(student);
 			await _context.SaveChangesAsync();
 

@@ -1,0 +1,66 @@
+﻿@using Newtonsoft.Json
+@model IEnumerable<project_mvc.Models.AnalysisModels.TeachersGraph>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+@{
+	ViewData["Title"] = "TeachersGraphs";
+}
+
+
+<div class="container">
+	@Html.DropDownList("subjects-list",
+	new SelectList(Model, "SubjectId", "SubjectName"), new
+	{
+	@class = "form-control",
+	onchange = $"updateGraph()",
+	style = "width: fit-content; text-align: center; margin-bottom:2rem; position:center; margin-left: auto"
+	})
+	<div id="chartContainer" style="height: 50rem; width: 100%; margin: auto"></div>
+</div>
+
+<script>
+	const updateGraph = () => {
+		const subjectId = $(`#subjects-list :selected`).val()
+		const teachers = @(Html.Raw(JsonConvert.SerializeObject(Model)))
+				.find(s => s.SubjectId == subjectId).TeachersGradeGraph
+		let totalAverage = 0
+		for (let teacher of teachers)
+			totalAverage += teacher["y"]
+		totalAverage /= teachers.length
+		totalAverage = parseFloat(totalAverage).toFixed(2)
+
+		const chart = new CanvasJS.Chart("chartContainer", {
+			animationEnabled: true,
+			theme: "light2", // "light1", "dark1", "dark2"
+			exportEnabled: true,
+			title: {
+				text: "Average Grade By Teachers"
+			},
+			axisY: {
+				title: "Grade",
+				minimum: 1.95,
+				maxium: 6,
+				stripLines: [{
+					showOnTop: true,
+					thickness: 2,
+					labelFontSize: 22,
+					color: "black",
+					labelFontColor: "black",
+					value: totalAverage,
+					label: `Overall grade ${totalAverage}`
+				}]
+			},
+			data: [{
+				type: "column",
+				dataPoints: teachers
+			}]
+		});
+		chart.render();
+	}
+
+	window.onload = () => {
+		updateGraph()
+	}
+</script>
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

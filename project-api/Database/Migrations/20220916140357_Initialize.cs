@@ -47,6 +47,21 @@ namespace project_api.Database.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Gender",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    GenderName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Gender", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Grade",
                 columns: table => new
                 {
@@ -253,6 +268,7 @@ namespace project_api.Database.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     LastName = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    GenderId = table.Column<int>(type: "int", nullable: false),
                     FacultyNumber = table.Column<string>(type: "varchar(12)", maxLength: 12, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AddressId = table.Column<int>(type: "int", nullable: false),
@@ -278,6 +294,12 @@ namespace project_api.Database.Migrations
                         name: "FK_Student_Faculty_FacultyId",
                         column: x => x.FacultyId,
                         principalTable: "Faculty",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Student_Gender_GenderId",
+                        column: x => x.GenderId,
+                        principalTable: "Gender",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -339,7 +361,8 @@ namespace project_api.Database.Migrations
                 {
                     StudentId = table.Column<int>(type: "int", nullable: false),
                     SubjectId = table.Column<int>(type: "int", nullable: false),
-                    GradeId = table.Column<int>(type: "int", nullable: true)
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    GradeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -348,7 +371,8 @@ namespace project_api.Database.Migrations
                         name: "FK_StudentsSubjects_Grade_GradeId",
                         column: x => x.GradeId,
                         principalTable: "Grade",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StudentsSubjects_Student_StudentId",
                         column: x => x.StudentId,
@@ -446,6 +470,11 @@ namespace project_api.Database.Migrations
                 column: "FacultyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Student_GenderId",
+                table: "Student",
+                column: "GenderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StudentsSubjects_GradeId",
                 table: "StudentsSubjects",
                 column: "GradeId");
@@ -534,6 +563,9 @@ namespace project_api.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "Course");
+
+            migrationBuilder.DropTable(
+                name: "Gender");
 
             migrationBuilder.DropTable(
                 name: "CourseN");

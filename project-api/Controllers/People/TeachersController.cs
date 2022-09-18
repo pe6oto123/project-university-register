@@ -57,6 +57,14 @@ namespace project_api.Controllers.People
 				.Where(s => studentsSubjects.Any(x => x.SubjectId == s.SubjectId))
 				.ToList();
 
+			foreach (var item in removeStuSubj)
+			{
+				studentsSubjects
+					.Where(s => s.SubjectId == item.SubjectId)
+					.Where(s => s.StudentId == item.StudentId)
+					.First().Year = item.Year;
+			}
+
 			_context.RemoveRange(removeStuSubj);
 			_context.AddRange(studentsSubjects);
 			await _context.SaveChangesAsync();

@@ -1,7 +1,64 @@
-﻿
+﻿@model project_mvc.Models.DataModels.People.Student
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1 style="text-align: center; margin-bottom:2rem">Student Information</h1>
 
+<table class="table table-bordered" style="font-size: 1.1rem; margin-bottom:5rem">
+	<tbody>
+		<tr>
+			<td style="font-weight: bold; background-color:ghostwhite;width: 12%">Full Name:</td>
+			<td>@(Model.FirstName) @(Model.LastName)</td>
+			<td style="font-weight: bold; background-color:ghostwhite;width:12%">Faculty №:</td>
+			<td>@(Model.FacultyNumber)</td>
+		</tr>
+		<tr>
+			<td style="font-weight: bold; background-color:ghostwhite">Citizenship:</td>
+			<td>@(Model.Address!.City!.CityName)</td>
+			<td style="font-weight: bold; background-color:ghostwhite">Faculty:</td>
+			<td>@(Model.Faculty!.FacultyName)</td>
+		</tr>
+		<tr>
+			<td style="font-weight: bold; background-color:ghostwhite">Address:</td>
+			<td>@(Model.Address!.AddressName)</td>
+			<td style="font-weight: bold; background-color:ghostwhite">Speciality:</td>
+			<td>@(Model.Course!.CourseN!.CourseName)</td>
+		</tr>
+	</tbody>
+</table>
+
+@for (short i = 0; i < Model.Course.CourseLength; ++i)
+{
+	<div class="container" style="padding:initial">
+		<table class="table table-bordered  table-striped">
+			<thead>
+				<tr style="background-color:ghostwhite">
+					<th>
+						@Html.DisplayName("Subject")
+					</th>
+					<th style="width: 12%">
+						@Html.DisplayName("Grade")
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<h5 style="font-weight:bold;font-style:italic">Grades from course @(i+1)</h5>
+				@foreach (var item in Model.StudentsSubjects!.Where(s => s.Year == i + 1).ToList())
+				{
+					
+					<tr>
+						<td>
+							@Html.DisplayFor(modelItem => item.Subject!.SubjectName)
+						</td>
+						<td style="text-align: center">
+							@Html.DisplayFor(modelItem => item.Grade!.GradeName)
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}

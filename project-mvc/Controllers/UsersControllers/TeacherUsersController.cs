@@ -37,6 +37,7 @@ namespace project_mvc.Controllers.UsersControllers
 
 			ViewBag.TeacherSearch = studentSearch;
 			ViewBag.SubjectId = subjectId;
+			ViewBag.TeacherId = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "id")?.Value;
 
 			if (ViewBag.SelectList == null)
 				ViewBag.SelectList = "[]";

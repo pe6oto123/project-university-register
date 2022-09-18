@@ -23,10 +23,22 @@
 				<span asp-validation-for="LastName" class="text-danger"></span>
 			</div>
 			<div class="form-group">
+				@Html.LabelFor(model => model.GenderId, "Gender", htmlAttributes: new
+				{
+					@class = "control-label",
+					style = "font-weight:bold"
+				})
+				@Html.DropDownListFor(model => model.GenderId, ViewBag.Genders as IEnumerable<SelectListItem>, new
+				{
+					@class = "form-control"
+				})
+				@Html.ValidationMessageFor(model => model.GenderId, "", new { @class = "text-danger" })
+			</div>
+			<div class="form-group">
 				@Html.LabelFor(model => model.FacultyId, "Faculty", htmlAttributes: new
 				{
 					@class = "control-label",
-				style = "font-weight:bold"
+					style = "font-weight:bold"
 				})
 				@Html.DropDownListFor(model => model.FacultyId, ViewBag.Faculties as IEnumerable<SelectListItem>, new
 				{
@@ -38,7 +50,7 @@
 				@Html.LabelFor(model => model.CourseId, "Course", htmlAttributes: new
 				{
 					@class = "control-label",
-				style = "font-weight:bold"
+					style = "font-weight:bold"
 				})
 				@Html.DropDownListFor(model => model.CourseId, ViewBag.Courses as IEnumerable<SelectListItem>, new
 				{
@@ -56,7 +68,7 @@
 				@Html.LabelFor(model => model.Address!.CityId, "City", htmlAttributes: new
 				{
 					@class = "control-label",
-				style = "font-weight:bold"
+					style = "font-weight:bold"
 				})
 				@Html.DropDownListFor(model => model.Address!.CityId, ViewBag.Cities as IEnumerable<SelectListItem>, new
 					{ @class = "form-control" })

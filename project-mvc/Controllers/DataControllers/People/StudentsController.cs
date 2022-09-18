@@ -49,6 +49,14 @@ namespace project_mvc.Controllers.DataControllers.People
 				"Id", "CityName");
 
 			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeStudents}/Gender");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Genders = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Gender>>(),
+				"Id", "GenderName");
+
+			_response = await Client.GetClient(token)
 				.GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
@@ -61,8 +69,13 @@ namespace project_mvc.Controllers.DataControllers.People
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
-			ViewBag.Courses = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Course>>(),
-				"Id", "CourseN.CourseName");
+			var courses = from course in await _response.Content.ReadFromJsonAsync<IEnumerable<Course>>()
+						  select new
+						  {
+							  course.Id,
+							  CourseName = $"{course.CourseN!.CourseName} [{course.Enrolment!.Value.ToString("dd.MM.yyyyг.")}]"
+						  };
+			ViewBag.Courses = new SelectList(courses, "Id", "CourseName");
 
 			return View();
 		}
@@ -72,7 +85,7 @@ namespace project_mvc.Controllers.DataControllers.People
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,FacultyNumber,AddressId,Address,FacultyId,CourseId")] Student student)
+		public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,FacultyNumber,AddressId,Address,FacultyId,CourseId,GenderId")] Student student)
 		{
 			if (ModelState.IsValid)
 			{
@@ -109,6 +122,14 @@ namespace project_mvc.Controllers.DataControllers.People
 				"Id", "CityName", student!.AddressId);
 
 			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeStudents}/Gender");
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			ViewBag.Genders = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Gender>>(),
+				"Id", "GenderName");
+
+			_response = await Client.GetClient(token)
 				.GetAsync($"{Client._routeFaculties}");
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
@@ -121,9 +142,14 @@ namespace project_mvc.Controllers.DataControllers.People
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
-			ViewBag.Courses = new SelectList(await _response.Content.ReadFromJsonAsync<IEnumerable<Course>>(),
-				"Id", "CourseN.CourseName", student!.CourseId);
-
+			var courses = from course in await _response.Content.ReadFromJsonAsync<IEnumerable<Course>>()
+						  select new
+						  {
+							  course.Id,
+							  CourseName = $"{course.CourseN!.CourseName} [{course.Enrolment!.Value.ToString("dd.MM.yyyyг.")}]"
+						  };
+			ViewBag.Courses = new SelectList(courses,
+				"Id", "CourseName", student!.CourseId);
 
 			return View(student);
 		}
@@ -133,7 +159,7 @@ namespace project_mvc.Controllers.DataControllers.People
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,FacultyNumber,AddressId,Address,FacultyId,CourseId")] Student student)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,FacultyNumber,AddressId,Address,FacultyId,CourseId,GenderId")] Student student)
 		{
 			if (ModelState.IsValid)
 			{

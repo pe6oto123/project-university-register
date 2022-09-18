@@ -11,7 +11,7 @@ namespace project_mvc.Models.DataModels.University
 		public int? CourseNId { get; set; }
 		public virtual CourseN? CourseN { get; set; }
 
-		[Required, DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
+		[Required, DisplayFormat(DataFormatString = "{0:dd.MM.yyyyг.}")]
 		public DateTime? Enrolment { get; set; }
 
 		[Required, Range(1, 4)]

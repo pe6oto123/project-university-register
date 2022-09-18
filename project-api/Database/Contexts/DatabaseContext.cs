@@ -25,6 +25,7 @@ namespace project_api.Database.Contexts
 		public DbSet<SchedulesSubjects> SchedulesSubjects => Set<SchedulesSubjects>();
 		public DbSet<Subject> Subject => Set<Subject>();
 		public DbSet<Student> Student => Set<Student>();
+		public DbSet<Gender> Gender => Set<Gender>();
 		public DbSet<StudentsSubjects> StudentsSubjects => Set<StudentsSubjects>();
 		public DbSet<Grade> Grade => Set<Grade>();
 		public DbSet<Teacher> Teacher => Set<Teacher>();

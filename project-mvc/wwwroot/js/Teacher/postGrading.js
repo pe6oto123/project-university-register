@@ -4,6 +4,7 @@
 	}
 	const studentId = dropDown.replace('student-grade-', '')
 	const gradeId = $(`#${dropDown} :selected`).val()
+	const teacherId = $('input[name=teacherId]').val()
 	subjectId = subjectId.toString()
 
 	let grading = JSON.parse(localStorage.getItem("grading"))
@@ -15,13 +16,14 @@
 		grading.push({
 			"StudentId": studentId,
 			"SubjectId": subjectId,
-			"GradeId": gradeId
+			"Year": 0,
+			"GradeId": gradeId,
+			"TeacherId": teacherId
 		})
 	}
 	else {
 		grading.find((item) => {
 			if (item.StudentId == studentId && item.SubjectId == subjectId)
-
 				item.GradeId = gradeId
 		})
 	}
@@ -53,12 +55,13 @@ const postGrading = () => {
 window.onload = () => {
 	const subjectId = $('input[name=subjectId]').val()
 	const grading = JSON.parse(localStorage.getItem("grading"))
-	grading.forEach(item => {
-		if (item.SubjectId == subjectId) {
-			$(`#student-grade-${item.StudentId}`).val(item.GradeId)
-			$(`#student-grade-${item.StudentId}`).css('color', 'red')
-		}
-	})
+	if (grading != null)
+		grading.forEach(item => {
+			if (item.SubjectId == subjectId) {
+				$(`#student-grade-${item.StudentId}`).val(item.GradeId)
+				$(`#student-grade-${item.StudentId}`).css('color', 'red')
+			}
+		})
 }
 
 const resetSelection = () => {

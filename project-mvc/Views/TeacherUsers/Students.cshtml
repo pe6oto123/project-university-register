@@ -13,6 +13,7 @@
 <div class="search-group">
 	@using (Html.BeginForm("Students", "TeacherUsers", FormMethod.Get))
 	{
+		<input type="hidden" name="teacherId" value="@ViewBag.TeacherId" />
 		<input type="hidden" name="subjectId" value="@ViewBag.SubjectId" />
 		<div class="input-group-text" style="margin-bottom:1rem; padding-left:0.75rem">
 			<h5 style="padding-right:0.5rem;padding-top: inherit;">Students</h5>
@@ -140,12 +141,12 @@
 					</td>
 					<td class="align-middle">
 						@Html.DropDownList($"student-grade-{item.Id}",
-					new SelectList(ViewBag.Grades, "Id", "GradeName", item.StudentsSubjects!.Select(s => s.Grade).First()!.Id), new
-					{
-					@class = "form-control",
-					onchange = $"selectListCache({ViewBag.SubjectId} ,\"student-grade-{item.Id}\")",
-					style = "width: fit-content; text-align: center"
-					})
+							new SelectList(ViewBag.Grades, "Id", "GradeName", item.StudentsSubjects!.Select(s => s.Grade).First()!.Id), new
+								{
+								@class = "form-control",
+								onchange = $"selectListCache({ViewBag.SubjectId} ,\"student-grade-{item.Id}\")",
+								style = "width: fit-content; text-align: center"
+								})
 					</td>
 				</tr>
 			}

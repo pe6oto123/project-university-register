@@ -19,6 +19,10 @@ namespace project_mvc.Models.DataModels.People
 		public string? LastName { get; set; }
 
 		[Required]
+		public int? GenderId { get; set; }
+		public virtual Gender? Gender { get; set; }
+
+		[Required]
 		[StringLength(12)]
 		public string? FacultyNumber { get; set; }
 
@@ -37,6 +41,15 @@ namespace project_mvc.Models.DataModels.People
 		public virtual ICollection<StudentsSubjects>? StudentsSubjects { get; set; }
 	}
 
+	public class Gender
+	{
+		[Key]
+		public int Id { get; set; }
+
+		[Required]
+		public string? GenderName { get; set; }
+	}
+
 	public class StudentsSubjects
 	{
 		[Key, Column(Order = 0)]
@@ -50,8 +63,13 @@ namespace project_mvc.Models.DataModels.People
 		public virtual Subject? Subject { get; set; }
 
 		[Required]
+		public int? Year { get; set; }
+
+		[Required]
 		public int? GradeId { get; set; }
 		public virtual Grade? Grade { get; set; }
+
+		public int? TeacherId { get; set; }
 	}
 
 	public class Grade

@@ -24,6 +24,18 @@
 				<span asp-validation-for="LastName" class="text-danger"></span>
 			</div>
 			<div class="form-group">
+				@Html.LabelFor(model => model.GenderId, "Gender", htmlAttributes: new
+				{
+					@class = "control-label",
+					style = "font-weight:bold"
+				})
+				@Html.DropDownListFor(model => model.GenderId, ViewBag.Genders as IEnumerable<SelectListItem>, new
+				{
+					@class = "form-control"
+				})
+				@Html.ValidationMessageFor(model => model.GenderId, "", new { @class = "text-danger" })
+			</div>
+			<div class="form-group">
 				@Html.LabelFor(model => model.FacultyId, "Faculty", htmlAttributes: new
 				{
 					@class = "control-label",
