@@ -19,6 +19,7 @@
 					@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "btn btn-primary" })
 					@Html.ActionLink("Teachers", "TeachersGraphs", "Graphs", new { area = "" }, new { @class = "btn btn-primary" })
 					@Html.ActionLink("Cities", "CitiesGraphs", "Graphs", new { area = "" }, new { @class = "btn btn-primary" })
+					@Html.ActionLink("Students", "StudentsGraphs", "Graphs", new { area = "" }, new { @class = "btn btn-primary" })
 					@if (User.Identity!.IsAuthenticated)
 					{
 						if (User.IsInRole("Admin"))

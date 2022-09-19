@@ -8,27 +8,28 @@
 
 
 <div class="container">
-	<div style="display:flex;margin:0.5rem">
-		@Html.DropDownList("faculty-list",
-		new SelectList(Model, "FacultyId", "FacultyName"), new
-		{
-		@class = "form-control",
-		onchange = $"updateSubjectList()",
-		style = "width:fit-content;text-align:center;margin-right:1rem"
-		})
-
-		@foreach (var faculty in Model)
-		{
-			@Html.DropDownList($"subject-list-facultyId-{faculty.FacultyId}",
-		new SelectList(faculty.TeachersSubjectGraph, "SubjectId", "SubjectName"), new
-		{
-		@class = "form-control",
-		onchange = $"updateGraph({faculty.FacultyId})",
-		style = "display: none; width: fit-content; text-align: center; min-width: 20rem"
-		})
-		}
+	<div style="display:flex; margin-bottom: 2rem; margin-left: auto">
+		<div style="display: flex; margin-left: auto">
+			@foreach (var faculty in Model)
+			{
+				@Html.DropDownList($"subject-list-facultyId-{faculty.FacultyId}",
+				new SelectList(faculty.TeachersSubjectGraph, "SubjectId", "SubjectName"), new
+				{
+				@class = "form-control",
+				onchange = $"updateGraph({faculty.FacultyId})",
+				style = "margin-right:1rem; display: none; width: fit-content; text-align: center; min-width: 20rem"
+				})
+			}
+			@Html.DropDownList("faculty-list",
+			new SelectList(Model, "FacultyId", "FacultyName"), new
+			{
+			@class = "form-control",
+			onchange = $"updateSubjectList()",
+			style = "width:fit-content;text-align:center"
+			})
+		</div>
 	</div>
-	<div id="chartContainer" style="height: 50rem; width: 100%; margin: auto"></div>
+	<div id="chartContainer" style="height: 40rem; width: 100%; margin: auto"></div>
 </div>
 
 <script>

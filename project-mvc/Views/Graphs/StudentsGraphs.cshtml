@@ -1,0 +1,135 @@
+﻿@using Newtonsoft.Json
+@model IEnumerable<project_mvc.Models.AnalysisModels.Derived.StudentsGraph>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+@{
+	ViewData["Title"] = "StudentsGraphs";
+}
+<div class="container">
+	<div style="display:flex;margin-bottom:2rem">
+		<div style="margin-left:auto; display: flex">
+		<button class="btn btn-primary" id="backButton" style="display:none">Back</button>
+		@Html.DropDownList("faculty-list",
+		new SelectList(Model, "FacultyId", "FacultyName"), new
+		{
+		@class = "form-control",
+		onchange = $"updateGraph()",
+		style = "width: fit-content; text-align: center; margin-left: 0.5rem"
+		})	
+		</div>
+	</div>
+	<div id="chartContainer" style="height: 40rem; width: 100%; margin: auto"></div>
+</div>
+<script>
+	const updateGraph = () => {
+		$("#backButton").hide()
+
+		const facultyId = $(`#faculty-list :selected`).val()
+		const students = @(Html.Raw(JsonConvert.SerializeObject(Model)))
+		const totalStudents = students.find(s => s.FacultyId == facultyId).TotalStudents
+		const color = {
+			"Male": students
+				.find(s => true).StudentsGenderGraph
+				.find(s => s["name"] == "Male")["color"],
+			"Female": students
+				.find(s => true).StudentsGenderGraph
+				.find(s => s["name"] == "Female")["color"]
+		}
+
+
+		const studentChartHandler = (e) => {
+			chart = new CanvasJS.Chart("chartContainer", studentsDrilldownedChartOptions);
+			chart.options.data = studentsData[e.dataPoint.name];
+			chart.options.title = { text: e.dataPoint.name }
+			chart.render();
+			$("#backButton").show();
+		}
+
+		const studentsData = {
+			"Male to Female Students": [{
+				click: studentChartHandler,
+				cursor: "pointer",
+				explodeOnClick: false,
+				innerRadius: "75%",
+				legendMarkerType: "square",
+				name: "Male to Female Students",
+				radius: "100%",
+				showInLegend: true,
+				startAngle: 270,
+				type: "doughnut",
+				dataPoints: students
+					.find(s => s.FacultyId == facultyId).StudentsGenderGraph
+			}],
+			"Male": [{
+				color: color["Male"],
+				name: "Male",
+				type: "column",
+				dataPoints: students
+					.find(s => s.FacultyId == facultyId).StudentsGenderGraph
+					.find(s => s["name"] == "Male").StudentsGradeGraph
+			}],
+			"Female": [{
+				color: color["Female"],
+				name: "Female",
+				type: "column",
+				dataPoints: students
+					.find(s => s.FacultyId == facultyId).StudentsGenderGraph
+					.find(s => s["name"] == "Female").StudentsGradeGraph
+			}]
+		}
+
+		const studentsChartOptions = {
+			animationEnabled: true,
+			theme: "light2",
+			title: {
+				text: "Male to Female Students"
+			},
+			legend: {
+				fontFamily: "calibri",
+				fontSize: 14,
+				itemTextFormatter: (e) => {
+					return e.dataPoint.name + ": " + Math.round(e.dataPoint.y / totalStudents * 100) + "%";
+				}
+			},
+			data: []
+		}
+
+		const studentsDrilldownedChartOptions = {
+			animationEnabled: true,
+			theme: "light2",
+			axisX: {
+				labelFontColor: "#717171",
+				lineColor: "#a2a2a2",
+				tickColor: "#a2a2a2"
+			},
+			axisY: {
+				gridThickness: 0,
+				includeZero: false,
+				labelFontColor: "#717171",
+				lineColor: "#a2a2a2",
+				tickColor: "#a2a2a2",
+				lineThickness: 1
+			},
+			data: []
+		}
+
+		let chart = new CanvasJS.Chart("chartContainer", studentsChartOptions)
+		chart.options.data = studentsData["Male to Female Students"]
+		chart.render()
+
+		$("#backButton").click(() => {
+			$("#backButton").hide()
+			chart = new CanvasJS.Chart("chartContainer", studentsChartOptions)
+			chart.options.data = studentsData["Male to Female Students"]
+			chart.render()
+		})
+
+	}
+
+	window.onload = () => {
+		updateGraph()
+	}
+</script>
+
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

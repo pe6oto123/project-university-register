@@ -12,9 +12,9 @@
 	{
 	@class = "form-control",
 	onchange = $"updateGraph()",
-	style = "width: fit-content; text-align: center; margin-bottom:2rem; position:center; margin-left: auto"
+	style = "width: fit-content; text-align: center; margin-bottom:2rem; margin-left: auto"
 	})
-	<div id="chartContainer" style="height: 50rem; width: 100%; margin: auto"></div>
+	<div id="chartContainer" style="height: 40rem; width: 100%; margin: auto"></div>
 </div>
 
 <script>
@@ -54,12 +54,11 @@
 				dataPoints: faculties
 			}]
 		});
-		chart.render();
+		chart.render()
 	}
 
 	window.onload = () => {
 		updateGraph()
 	}
 </script>
-<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
