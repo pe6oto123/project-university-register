@@ -362,7 +362,8 @@ namespace project_api.Database.Migrations
                     StudentId = table.Column<int>(type: "int", nullable: false),
                     SubjectId = table.Column<int>(type: "int", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
-                    GradeId = table.Column<int>(type: "int", nullable: false)
+                    GradeId = table.Column<int>(type: "int", nullable: false),
+                    TeacherId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -385,6 +386,11 @@ namespace project_api.Database.Migrations
                         principalTable: "Subject",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentsSubjects_Teacher_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "Teacher",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -483,6 +489,11 @@ namespace project_api.Database.Migrations
                 name: "IX_StudentsSubjects_SubjectId",
                 table: "StudentsSubjects",
                 column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentsSubjects_TeacherId",
+                table: "StudentsSubjects",
+                column: "TeacherId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Subject_FacultyId",

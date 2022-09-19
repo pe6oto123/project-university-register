@@ -209,6 +209,9 @@ namespace project_api.Database.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
+                    b.Property<int?>("TeacherId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Year")
                         .IsRequired()
                         .HasColumnType("int");
@@ -218,6 +221,8 @@ namespace project_api.Database.Migrations
                     b.HasIndex("GradeId");
 
                     b.HasIndex("SubjectId");
+
+                    b.HasIndex("TeacherId");
 
                     b.ToTable("StudentsSubjects");
                 });
@@ -509,11 +514,17 @@ namespace project_api.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("project_api.Database.Entities.People.Teacher", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId");
+
                     b.Navigation("Grade");
 
                     b.Navigation("Student");
 
                     b.Navigation("Subject");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("project_api.Database.Entities.People.Teacher", b =>

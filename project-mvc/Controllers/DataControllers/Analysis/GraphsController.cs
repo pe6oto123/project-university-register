@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using project_mvc.ApiClient;
-using project_mvc.Models.AnalysisModels;
+using project_mvc.Models.AnalysisModels.Derived;
 
 namespace project_mvc.Controllers.DataControllers.Analysis
 {
@@ -9,22 +8,35 @@ namespace project_mvc.Controllers.DataControllers.Analysis
 	{
 		private HttpResponseMessage? _response;
 
-		// GET: Graphs
+		// GET: TeachersGraphs
 		public async Task<IActionResult> TeachersGraphs()
 		{
 			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
 
 			_response = await Client.GetClient(token)
-				.GetAsync($"{Client._routeGraphs}");
+				.GetAsync($"{Client._routeGraphs}/TeachersGraphs");
 
 			if (!_response.IsSuccessStatusCode)
 				return Problem(await _response.Content.ReadAsStringAsync());
 
 			var teachersGraphs = await _response.Content.ReadFromJsonAsync<IEnumerable<TeachersGraph>>();
-			ViewBag.Subjects = new SelectList(teachersGraphs, "SubjectId", "SubjectName");
-
 
 			return View(teachersGraphs);
+		}
+
+		public async Task<IActionResult> CitiesGraphs()
+		{
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeGraphs}/CitiesGraphs");
+
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			var citiesGraphs = await _response.Content.ReadFromJsonAsync<IEnumerable<CitiesGraph>>();
+
+			return View(citiesGraphs);
 		}
 	}
 }

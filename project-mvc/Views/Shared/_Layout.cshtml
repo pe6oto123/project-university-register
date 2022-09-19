@@ -17,7 +17,8 @@
 			<div style="margin-right:auto">
 				<li id="btn-group-toggle" class="btn-group" style="flex-wrap: wrap; justify-content: space-evenly;">
 					@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "btn btn-primary" })
-					@Html.ActionLink("Graphs", "TeachersGraphs", "Graphs", new { area = "" }, new { @class = "btn btn-primary" })
+					@Html.ActionLink("Teachers", "TeachersGraphs", "Graphs", new { area = "" }, new { @class = "btn btn-primary" })
+					@Html.ActionLink("Cities", "CitiesGraphs", "Graphs", new { area = "" }, new { @class = "btn btn-primary" })
 					@if (User.Identity!.IsAuthenticated)
 					{
 						if (User.IsInRole("Admin"))

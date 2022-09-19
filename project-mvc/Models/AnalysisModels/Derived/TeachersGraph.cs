@@ -1,11 +1,17 @@
 ﻿using System.Runtime.Serialization;
 
-namespace project_mvc.Models.AnalysisModels
+namespace project_mvc.Models.AnalysisModels.Derived
 {
-	public class TeachersGraph
+	public class TeachersGraph : FacultyGraph
+	{
+		public ICollection<TeachersSubjectGraph>? TeachersSubjectGraph { get; set; }
+	}
+
+	public class TeachersSubjectGraph
 	{
 		public int SubjectId { get; set; }
 		public string? SubjectName { get; set; }
+
 		public ICollection<TeachersGradeGraph>? TeachersGradeGraph { get; set; }
 	}
 

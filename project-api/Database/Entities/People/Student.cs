@@ -70,6 +70,7 @@ namespace project_api.Database.Entities.People
 		public virtual Grade? Grade { get; set; }
 
 		public int? TeacherId { get; set; }
+		public virtual Teacher? Teacher { get; set; }
 	}
 
 	public class Grade

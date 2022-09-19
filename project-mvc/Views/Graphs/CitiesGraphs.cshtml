@@ -1,0 +1,65 @@
+﻿@using Newtonsoft.Json
+@model IEnumerable<project_mvc.Models.AnalysisModels.Derived.CitiesGraph>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+@{
+    ViewData["Title"] = "CitiesGraphs";
+}
+
+<div class="container">
+	@Html.DropDownList("faculties-list",
+	new SelectList(Model, "FacultyId", "FacultyName"), new
+	{
+	@class = "form-control",
+	onchange = $"updateGraph()",
+	style = "width: fit-content; text-align: center; margin-bottom:2rem; position:center; margin-left: auto"
+	})
+	<div id="chartContainer" style="height: 50rem; width: 100%; margin: auto"></div>
+</div>
+
+<script>
+	const updateGraph = () => {
+		const facultyId = $(`#faculties-list :selected`).val()
+		const faculties = @(Html.Raw(JsonConvert.SerializeObject(Model)))
+						.find(s => s.FacultyId == facultyId).CitiesGradeGraph
+		let totalAverage = 0
+		for (let faculty of faculties)
+			totalAverage += faculty["y"]
+		totalAverage /= faculties.length
+		totalAverage = parseFloat(totalAverage).toFixed(2)
+
+		const chart = new CanvasJS.Chart("chartContainer", {
+			animationEnabled: true,
+			theme: "light2", // "light1", "dark1", "dark2"
+			exportEnabled: true,
+			title: {
+				text: "Average Grade By Cities"
+			},
+			axisY: {
+				title: "Grade",
+				minimum: 1.95,
+				maxium: 6,
+				stripLines: [{
+					showOnTop: true,
+					thickness: 2,
+					labelFontSize: 22,
+					color: "black",
+					labelFontColor: "black",
+					value: totalAverage,
+					label: `Overall grade ${totalAverage}`
+				}]
+			},
+			data: [{
+				type: "column",
+				dataPoints: faculties
+			}]
+		});
+		chart.render();
+	}
+
+	window.onload = () => {
+		updateGraph()
+	}
+</script>
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
