@@ -174,6 +174,12 @@ namespace project_api.Controllers.People
 				return NotFound();
 			}
 
+			var teacherUser = await _context.User
+				.Where(s => s.TeacherId == id)
+				.FirstOrDefaultAsync();
+			if (teacherUser != null)
+				_context.User.Remove(teacherUser);
+
 			_context.Address.Remove(teacher.Address!);
 			_context.Teacher.Remove(teacher);
 			await _context.SaveChangesAsync();

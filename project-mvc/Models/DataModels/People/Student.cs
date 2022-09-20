@@ -63,6 +63,10 @@ namespace project_mvc.Models.DataModels.People
 		public virtual Subject? Subject { get; set; }
 
 		[Required]
+		public int? CourseId { get; set; }
+		public virtual Course? Course { get; set; }
+
+		[Required]
 		public int? Year { get; set; }
 
 		[Required]

@@ -11,7 +11,7 @@ using project_api.Database.Contexts;
 namespace project_api.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220918130536_Initialize")]
+    [Migration("20220920165040_Initialize")]
     partial class Initialize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -207,6 +207,10 @@ namespace project_api.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
+                    b.Property<int?>("CourseId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
                     b.Property<int?>("GradeId")
                         .IsRequired()
                         .HasColumnType("int");
@@ -219,6 +223,8 @@ namespace project_api.Database.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("StudentId", "SubjectId");
+
+                    b.HasIndex("CourseId");
 
                     b.HasIndex("GradeId");
 
@@ -329,7 +335,12 @@ namespace project_api.Database.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<int>("FacultyId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("FacultyId");
 
                     b.ToTable("CourseN");
                 });
@@ -498,6 +509,12 @@ namespace project_api.Database.Migrations
 
             modelBuilder.Entity("project_api.Database.Entities.People.StudentsSubjects", b =>
                 {
+                    b.HasOne("project_api.Database.Entities.University.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("project_api.Database.Entities.People.Grade", "Grade")
                         .WithMany()
                         .HasForeignKey("GradeId")
@@ -519,6 +536,8 @@ namespace project_api.Database.Migrations
                     b.HasOne("project_api.Database.Entities.People.Teacher", "Teacher")
                         .WithMany()
                         .HasForeignKey("TeacherId");
+
+                    b.Navigation("Course");
 
                     b.Navigation("Grade");
 
@@ -582,6 +601,17 @@ namespace project_api.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("CourseN");
+
+                    b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("project_api.Database.Entities.University.CourseN", b =>
+                {
+                    b.HasOne("project_api.Database.Entities.University.Faculty", "Faculty")
+                        .WithMany()
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Faculty");
                 });

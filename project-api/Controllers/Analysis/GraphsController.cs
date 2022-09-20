@@ -190,5 +190,59 @@ namespace project_api.Controllers.Analysis
 
 			return studentsGraph;
 		}
+
+		// GET: api/Graphs/CoursesGraph
+		[HttpGet("CoursesGraph")]
+		public async Task<ActionResult<IEnumerable<CoursesGraph>>> GetCoursesGraph()
+		{
+			var faculties = await _context.Faculty
+				.ToListAsync();
+
+			var coursesGraph = new List<CoursesGraph>();
+			foreach (var faculty in faculties)
+			{
+				var courseNs = await _context.CourseN
+					.Where(s => s.FacultyId == faculty.Id)
+					.ToListAsync();
+
+				var courseYearGraph = new List<CourseYearGraph>();
+				foreach (var courseN in courseNs)
+				{
+					var courses = await _context.Course
+						.Where(s => s.CourseNId == courseN.Id)
+						.ToListAsync();
+
+					var courseGradeGraph = new List<CoursesGradeGraph>();
+					foreach (var course in courses)
+					{
+						var studentsSubjects = await _context.StudentsSubjects
+							.Where(s => s.CourseId == course.Id)
+							.Where(s => s.GradeId != 1)
+							.ToListAsync();
+
+						courseGradeGraph.Add(new CoursesGradeGraph()
+						{
+							CourseDate = course.Enrolment,
+							AverageGrade = (double?)Math.Round((decimal)studentsSubjects.Average(s => s.GradeId)!, 2)
+						});
+					}
+
+					courseYearGraph.Add(new CourseYearGraph()
+					{
+						CourseId = courseN.Id,
+						CourseName = courseN.CourseName,
+						CoursesGradeGraph = courseGradeGraph
+					});
+				}
+
+				coursesGraph.Add(new CoursesGraph()
+				{
+					FacultyId = faculty.Id,
+					FacultyName = faculty.FacultyName,
+					CourseYearGraph = courseYearGraph
+				});
+			}
+			return coursesGraph;
+		}
 	}
 }

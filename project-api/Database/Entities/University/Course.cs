@@ -41,6 +41,10 @@ namespace project_api.Database.Entities.University
 
 		[Required, StringLength(50)]
 		public string? CourseName { get; set; }
+
+		[Required]
+		public int FacultyId { get; set; }
+		public virtual Faculty? Faculty { get; set; }
 	}
 
 	public class Schedule

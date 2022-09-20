@@ -53,5 +53,20 @@ namespace project_mvc.Controllers.DataControllers.Analysis
 
 			return View(studentsGraphs);
 		}
+
+		public async Task<IActionResult> CoursesGraphs()
+		{
+			string? token = HttpContext.User.Claims.FirstOrDefault(s => s.Type == "token")?.Value;
+
+			_response = await Client.GetClient(token)
+				.GetAsync($"{Client._routeGraphs}/CoursesGraph");
+
+			if (!_response.IsSuccessStatusCode)
+				return Problem(await _response.Content.ReadAsStringAsync());
+
+			var coursesGraph = await _response.Content.ReadFromJsonAsync<IEnumerable<CoursesGraph>>();
+
+			return View(coursesGraph);
+		}
 	}
 }

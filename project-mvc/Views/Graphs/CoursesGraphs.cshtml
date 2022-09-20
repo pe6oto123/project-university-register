@@ -1,0 +1,100 @@
+﻿@using Newtonsoft.Json
+@model IEnumerable<project_mvc.Models.AnalysisModels.Derived.CoursesGraph>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+@{
+    ViewData["Title"] = "CoursesGraphs";
+}
+
+<div class="container">
+	<div style="display:flex; margin-bottom: 2rem; margin-left: auto">
+		<div style="display: flex; margin-left: auto">
+			@foreach (var faculty in Model)
+			{
+				@Html.DropDownList($"course-list-facultyId-{faculty.FacultyId}",
+				new SelectList(faculty.CourseYearGraph, "CourseId", "CourseName"), new
+				{
+				@class = "form-control",
+				onchange = $"updateGraph({faculty.FacultyId})",
+				style = "margin-right:1rem; display: none; width: fit-content; text-align: center; min-width: 20rem"
+				})
+			}
+			@Html.DropDownList("faculty-list",
+			new SelectList(Model, "FacultyId", "FacultyName"), new
+			{
+			@class = "form-control",
+			onchange = $"updateCourseList()",
+			style = "width:fit-content;text-align:center"
+			})
+		</div>
+	</div>
+	<div id="chartContainer" style="height: 40rem; width: 100%; margin: auto"></div>
+</div>
+
+<script>
+	let facultyListId
+
+	const updateGraph = (facultyId) => {
+		const courseId = $(`#course-list-facultyId-${facultyId} :selected`).val()
+		let courses
+		try{
+			courses = @(Html.Raw(JsonConvert.SerializeObject(Model)))
+					.find(s => s.FacultyId == facultyId).CourseYearGraph
+					.find(s => s.CourseId == courseId).CoursesGradeGraph
+		} catch(err) {}
+
+		for (let item of courses)
+			item["x"] = new Date(item["x"])
+
+		const chart = new CanvasJS.Chart("chartContainer", {
+			animationEnabled: true,
+			zoomEnabled: true,
+			theme: "light2",
+			title: {
+				text: "Average Grade of Speciality"
+			},
+			axisY: {
+				title: "Average Grade",
+				titleFontSize: 24,
+				crosshair: {
+					enabled: true,
+					snapToDataPoint: true
+				}
+			},
+			axisX: {
+				valueFormatString: "MMM YY",
+				crosshair: {
+					enabled: true,
+					snapToDataPoint: true
+				}
+			},
+			data: [{
+				type: "line",
+				dataPoints: courses
+			}]
+		})
+		chart.render()
+	}
+
+	const updateCourseList = () => {
+		const facultyId = $(`#faculty-list :selected`).val()
+		try {
+			$(`#course-list-facultyId-${selectedFaculty}`).hide()
+		} catch (err) { }
+
+		$(`#course-list-facultyId-${facultyId}`).show()
+		$(`#course-list-facultyId-${facultyId}`).prop("selectedIndex", 0)
+		selectedFaculty = facultyId
+
+		updateGraph(facultyId)
+	}
+
+	window.onload = () => {
+		updateCourseList()
+		const subjectFacultyId = $(`#course-list-facultyId-${selectedFaculty}`).val()
+		updateGraph(subjectFacultyId)
+	}
+</script>
+
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

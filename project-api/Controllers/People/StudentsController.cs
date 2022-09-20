@@ -203,6 +203,7 @@ namespace project_api.Controllers.People
 					{
 						StudentId = student.Id,
 						SubjectId = subject.SubjectId,
+						CourseId = course.Id,
 						Year = schedule.Year,
 						GradeId = 1
 					});
@@ -233,10 +234,14 @@ namespace project_api.Controllers.People
 				return NotFound();
 			}
 
-			_context.Address.Remove(student.Address!);
-			_context.User.Remove(await _context.User
+			var studentUser = await _context.User
 				.Where(s => s.StudentId == id)
-				.FirstAsync());
+				.FirstOrDefaultAsync();
+			if (studentUser != null)
+				_context.User.Remove(studentUser);
+
+
+			_context.Address.Remove(student.Address!);
 			_context.Student.Remove(student);
 			await _context.SaveChangesAsync();
 

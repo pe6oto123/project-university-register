@@ -8,7 +8,7 @@
 <div class="container">
 	<div style="display:flex;margin-bottom:2rem">
 		<div style="margin-left:auto; display: flex">
-		<button class="btn btn-primary" id="backButton" style="display:none">Back</button>
+		<button class="btn btn-primary" id="backButton">Back</button>
 		@Html.DropDownList("faculty-list",
 		new SelectList(Model, "FacultyId", "FacultyName"), new
 		{
@@ -22,7 +22,8 @@
 </div>
 <script>
 	const updateGraph = () => {
-		$("#backButton").hide()
+		//$("#backButton").hide()
+		$("#backButton").removeClass("btn btn-primary").addClass("btn btn-primary disabled");
 
 		const facultyId = $(`#faculty-list :selected`).val()
 		const students = @(Html.Raw(JsonConvert.SerializeObject(Model)))
@@ -42,7 +43,8 @@
 			chart.options.data = studentsData[e.dataPoint.name];
 			chart.options.title = { text: e.dataPoint.name }
 			chart.render();
-			$("#backButton").show();
+			//$("#backButton").show();
+			$("#backButton").removeClass("btn btn-primary disabled").addClass("btn btn-primary");
 		}
 
 		const studentsData = {
@@ -98,11 +100,13 @@
 			animationEnabled: true,
 			theme: "light2",
 			axisX: {
+				title: "Grade",
 				labelFontColor: "#717171",
 				lineColor: "#a2a2a2",
 				tickColor: "#a2a2a2"
 			},
 			axisY: {
+				title: "Students",
 				gridThickness: 0,
 				includeZero: false,
 				labelFontColor: "#717171",
@@ -118,7 +122,8 @@
 		chart.render()
 
 		$("#backButton").click(() => {
-			$("#backButton").hide()
+			//$("#backButton").hide()
+			$("#backButton").removeClass("btn btn-primary").addClass("btn btn-primary disabled");
 			chart = new CanvasJS.Chart("chartContainer", studentsChartOptions)
 			chart.options.data = studentsData["Male to Female Students"]
 			chart.render()
